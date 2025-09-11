@@ -1,16 +1,9 @@
 import { useState } from "react";
 import { GovHeader } from "./GovHeader";
+import { InternshipTile } from "./InternshipTile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Filter, Plus, Eye, Edit, MoreHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Search, Filter } from "lucide-react";
 
 const mockInternships = [
   {
@@ -65,151 +58,133 @@ const mockInternships = [
 
 interface InternshipsPageProps {
   onLogout: () => void;
-  onViewApplicants: (id: string) => void;
+  onInternshipClick: (id: string) => void;
   onNavigate: (page: string) => void;
   currentPage: string;
 }
 
-export function InternshipsPage({ onLogout, onViewApplicants, onNavigate, currentPage }: InternshipsPageProps) {
+export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, currentPage }: InternshipsPageProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "closed">("all");
-  const [filterCompany, setFilterCompany] = useState("");
-  const [filterLocation, setFilterLocation] = useState("");
+  const [filterCategory, setFilterCategory] = useState<"all" | "IT" | "Food Tech" | "Law" | "Finance" | "Healthcare">("all");
 
   const filteredInternships = mockInternships.filter(internship => {
     const matchesSearch = 
       internship.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       internship.company.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === "all" || internship.status === filterStatus;
-    const matchesCompany = !filterCompany || internship.company.toLowerCase().includes(filterCompany.toLowerCase());
-    const matchesLocation = !filterLocation || internship.location.toLowerCase().includes(filterLocation.toLowerCase());
     
-    return matchesSearch && matchesStatus && matchesCompany && matchesLocation;
+    // Simple category matching based on title keywords
+    const matchesCategory = filterCategory === "all" || 
+      (filterCategory === "IT" && (internship.title.toLowerCase().includes("software") || internship.title.toLowerCase().includes("data"))) ||
+      (filterCategory === "Finance" && internship.title.toLowerCase().includes("finance")) ||
+      (filterCategory === "Food Tech" && internship.title.toLowerCase().includes("food")) ||
+      (filterCategory === "Law" && internship.title.toLowerCase().includes("legal")) ||
+      (filterCategory === "Healthcare" && internship.title.toLowerCase().includes("health"));
+    
+    return matchesSearch && matchesStatus && matchesCategory;
   });
-
-  return (
+return (
     <div className="min-h-screen bg-background">
       <GovHeader onLogout={onLogout} onNavigate={onNavigate} currentPage={currentPage} />
       
       <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Internships Management</h1>
-            <p className="text-muted-foreground">Manage all internship opportunities</p>
-          </div>
-          <Button variant="government">
-            <Plus className="h-4 w-4" />
-            Add Internship
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Internships Hub</h1>
+          <p className="text-muted-foreground">Discover and manage all internship opportunities</p>
+        </div>
+
+        {/* Category Filters */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          <Button
+            variant={filterCategory === "all" ? "government" : "outline"}
+            onClick={() => setFilterCategory("all")}
+            size="sm"
+          >
+            All
+          </Button>
+          <Button
+            variant={filterCategory === "IT" ? "government" : "outline"}
+            onClick={() => setFilterCategory("IT")}
+            size="sm"
+          >
+            IT
+          </Button>
+          <Button
+            variant={filterCategory === "Food Tech" ? "government" : "outline"}
+            onClick={() => setFilterCategory("Food Tech")}
+            size="sm"
+          >
+            Food Tech
+          </Button>
+          <Button
+            variant={filterCategory === "Law" ? "government" : "outline"}
+            onClick={() => setFilterCategory("Law")}
+            size="sm"
+          >
+            Law
+          </Button>
+          <Button
+            variant={filterCategory === "Finance" ? "government" : "outline"}
+            onClick={() => setFilterCategory("Finance")}
+            size="sm"
+          >
+            Finance
+          </Button>
+          <Button
+            variant={filterCategory === "Healthcare" ? "government" : "outline"}
+            onClick={() => setFilterCategory("Healthcare")}
+            size="sm"
+          >
+            Healthcare
           </Button>
         </div>
 
-        {/* Filters */}
-        <div className="bg-card p-6 rounded-lg border shadow-sm mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search internships..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+        {/* Search and Status Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Filter by company..."
-              value={filterCompany}
-              onChange={(e) => setFilterCompany(e.target.value)}
+              placeholder="Search internships or companies..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
             />
-            <Input
-              placeholder="Filter by location..."
-              value={filterLocation}
-              onChange={(e) => setFilterLocation(e.target.value)}
-            />
-            <div className="flex gap-2">
-              <Button
-                variant={filterStatus === "all" ? "government" : "outline"}
-                onClick={() => setFilterStatus("all")}
-                size="sm"
-              >
-                All
-              </Button>
-              <Button
-                variant={filterStatus === "active" ? "success" : "outline"}
-                onClick={() => setFilterStatus("active")}
-                size="sm"
-              >
-                Active
-              </Button>
-              <Button
-                variant={filterStatus === "closed" ? "warning" : "outline"}
-                onClick={() => setFilterStatus("closed")}
-                size="sm"
-              >
-                Closed
-              </Button>
-            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant={filterStatus === "all" ? "government" : "outline"}
+              onClick={() => setFilterStatus("all")}
+              size="sm"
+            >
+              All
+            </Button>
+            <Button
+              variant={filterStatus === "active" ? "success" : "outline"}
+              onClick={() => setFilterStatus("active")}
+              size="sm"
+            >
+              Active
+            </Button>
+            <Button
+              variant={filterStatus === "closed" ? "warning" : "outline"}
+              onClick={() => setFilterStatus("closed")}
+              size="sm"
+            >
+              Closed
+            </Button>
           </div>
         </div>
 
-        {/* Internships Table */}
-        <div className="bg-card rounded-lg border shadow-sm">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Internship Title</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Applicants</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredInternships.map((internship) => (
-                <TableRow key={internship.id}>
-                  <TableCell className="font-medium">{internship.title}</TableCell>
-                  <TableCell>{internship.company}</TableCell>
-                  <TableCell>{internship.location}</TableCell>
-                  <TableCell>{internship.applicants} applicants</TableCell>
-                  <TableCell>
-                    <Badge variant={internship.status === "active" ? "success" : "warning"}>
-                      {internship.status === "active" ? "Active" : "Closed"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onViewApplicants(internship.id)}
-                      >
-                        <Eye className="h-4 w-4" />
-                        View Applicants
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <Edit className="h-4 w-4" />
-                        Edit
-                      </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                          <DropdownMenuItem>
-                            {internship.status === "active" ? "Close" : "Reopen"}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        {/* Internship Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredInternships.map((internship) => (
+            <InternshipTile
+              key={internship.id}
+              {...internship}
+              onClick={onInternshipClick}
+            />
+          ))}
         </div>
 
         {filteredInternships.length === 0 && (
@@ -221,8 +196,7 @@ export function InternshipsPage({ onLogout, onViewApplicants, onNavigate, curren
             <Button variant="outline" onClick={() => {
               setSearchTerm("");
               setFilterStatus("all");
-              setFilterCompany("");
-              setFilterLocation("");
+              setFilterCategory("all");
             }}>
               Clear Filters
             </Button>

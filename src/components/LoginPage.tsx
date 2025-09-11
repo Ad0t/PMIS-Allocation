@@ -5,8 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Lock } from "lucide-react";
 import govEmblem from "@/assets/gov-emblem.png";
-import mcaLogo from "@/assets/mca-logo.png";
-import pmInternshipLogo from "@/assets/pm-internship-logo.png";
+import mcaLogo from "@/assets/Ministry_of_Corporate_Affairs_India.png";
+import pmInternshipLogo from "@/assets/PMIS_Logo.png";
 
 interface LoginPageProps {
   onLogin: (username: string, password: string) => void;
@@ -34,10 +34,10 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         {/* Header with logos */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-4 mb-6">
-            <img src={govEmblem} alt="Government of India" className="h-16 w-16" />
-            <div className="flex flex-col space-y-2">
-              <img src={mcaLogo} alt="Ministry of Corporate Affairs" className="h-6 w-auto" />
-              <img src={pmInternshipLogo} alt="PM Internship Scheme" className="h-6 w-auto" />
+            {/* <img src={govEmblem} alt="Government of India" className="h-16 w-16" /> */}
+            <div className="flex items-center space-x-6">
+              <img src={mcaLogo} alt="Ministry of Corporate Affairs" className="h-12 w-auto" />
+              <img src={pmInternshipLogo} alt="PM Internship Scheme" className="h-12 w-auto" />
             </div>
           </div>
           <h1 className="text-2xl font-bold text-foreground">Admin Portal</h1>
@@ -108,7 +108,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         </Card>
         
         <div className="text-center mt-6 text-xs text-muted-foreground">
-          <p>© 2024 Government of India | Ministry of Corporate Affairs</p>
+          <p>© 2025 Government of India | Ministry of Corporate Affairs</p>
           <p>Secure access to authorized personnel only</p>
         </div>
       </div>

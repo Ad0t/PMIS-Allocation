@@ -2,12 +2,14 @@ import { useState } from "react";
 import { LoginPage } from "@/components/LoginPage";
 import { AdminDashboard } from "@/components/AdminDashboard";
 import { CandidateListingPage } from "@/components/CandidateListingPage";
+import { InternshipDetailPage } from "@/components/InternshipDetailPage";
 import { InternshipsPage } from "@/components/InternshipsPage";
 import { CandidatesPage } from "@/components/CandidatesPage";
 import { CompaniesPage } from "@/components/CompaniesPage";
 import { ReportsPage } from "@/components/ReportsPage";
 
-type AppState = "login" | "dashboard" | "candidates" | "internships" | "candidates-db" | "companies" | "reports";
+
+type AppState = "login" | "dashboard" | "candidates" | "internships" | "internship-detail" | "candidates-db" | "companies" | "reports";
 
 const Index = () => {
   const [currentState, setCurrentState] = useState<AppState>("login");
@@ -26,7 +28,12 @@ const Index = () => {
 
   const handleInternshipClick = (id: string) => {
     setSelectedInternshipId(id);
-    setCurrentState("candidates");
+    setCurrentState("internship-detail");
+  };
+
+  const handleBackToInternships = () => {
+    setCurrentState("internships");
+    setSelectedInternshipId("");
   };
 
   const handleBackToDashboard = () => {
@@ -60,9 +67,20 @@ const Index = () => {
     return (
       <InternshipsPage
         onLogout={handleLogout}
-        onViewApplicants={handleInternshipClick}
+        onInternshipClick={handleInternshipClick}
         onNavigate={handleNavigate}
         currentPage="internships"
+      />
+    );
+  }
+
+  if (currentState === "internship-detail") {
+    return (
+      <InternshipDetailPage
+        internshipId={selectedInternshipId}
+        onBack={handleBackToInternships}
+        onLogout={handleLogout}
+        onNavigate={handleNavigate}
       />
     );
   }
@@ -99,7 +117,7 @@ const Index = () => {
 
   return (
     <AdminDashboard
-      onInternshipClick={handleInternshipClick}
+      // onInternshipClick={handleInternshipClick}
       onLogout={handleLogout}
       onNavigate={handleNavigate}
     />

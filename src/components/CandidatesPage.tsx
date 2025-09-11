@@ -129,7 +129,7 @@ export function CandidatesPage({ onLogout, onNavigate, currentPage }: Candidates
                 <TableHead>Key Skills</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Applications</TableHead>
-                <TableHead>Actions</TableHead>
+                {/* <TableHead>Actions</TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -153,12 +153,12 @@ export function CandidatesPage({ onLogout, onNavigate, currentPage }: Candidates
                   </TableCell>
                   <TableCell>{candidate.location}</TableCell>
                   <TableCell>{candidate.applications} applications</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Button variant="outline" size="sm">
                       <Eye className="h-4 w-4" />
                       View Full Profile
                     </Button>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>

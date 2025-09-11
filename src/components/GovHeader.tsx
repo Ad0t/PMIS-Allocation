@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu, User } from "lucide-react";
-import govEmblem from "@/assets/gov-emblem.png";
-import mcaLogo from "@/assets/mca-logo.png";
-import pmInternshipLogo from "@/assets/pm-internship-logo.png";
+import mcaLogo from "@/assets/Ministry_of_Corporate_Affairs_India.png";
+import pmInternshipLogo from "@/assets/PMIS_Logo.png";
 
 interface GovHeaderProps {
   currentUser?: string;
@@ -18,9 +17,9 @@ export function GovHeader({ currentUser = "Admin User", onLogout, onNavigate, cu
         {/* Top bar with logos */}
         <div className="flex items-center justify-between py-3 border-b border-border">
           <div className="flex items-center space-x-6">
-            <img src={govEmblem} alt="Government of India" className="h-12 w-12" />
-            <img src={mcaLogo} alt="Ministry of Corporate Affairs" className="h-8 w-auto" />
-            <img src={pmInternshipLogo} alt="PM Internship Scheme" className="h-8 w-auto" />
+            {/* <img src={govEmblem} alt="Government of India" className="h-12 w-12" /> */}
+            <img src={mcaLogo} alt="Ministry of Corporate Affairs" className="h-16 w-auto" />
+            <img src={pmInternshipLogo} alt="PM Internship Scheme" className="h-16 w-auto" />
           </div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -64,25 +63,25 @@ export function GovHeader({ currentUser = "Admin User", onLogout, onNavigate, cu
               >
                 Candidates
               </Button>
-              <Button 
+              {/* <Button 
                 variant="ghost" 
                 className={currentPage === "companies" ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"}
                 onClick={() => onNavigate?.("companies")}
               >
                 Companies
-              </Button>
-              <Button 
+              </Button> */}
+              {/* <Button 
                 variant="ghost" 
                 className={currentPage === "reports" ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"}
                 onClick={() => onNavigate?.("reports")}
               >
                 Reports
-              </Button>
+              </Button> */}
             </div>
-            <Button variant="outline" size="sm">
+            {/* <Button variant="outline" size="sm">
               <Menu className="h-4 w-4" />
               Menu
-            </Button>
+            </Button> */}
           </div>
         </nav>
       </div>
