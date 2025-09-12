@@ -112,12 +112,6 @@ export function CandidatesPage({ onLogout, onNavigate, currentPage }: Candidates
                   </TableCell>
                   <TableCell>{candidate.location}</TableCell>
                   <TableCell>{candidate.applications} applications</TableCell>
-                  {/* <TableCell>
-                    <Button variant="outline" size="sm">
-                      <Eye className="h-4 w-4" />
-                      View Full Profile
-                    </Button>
-                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>

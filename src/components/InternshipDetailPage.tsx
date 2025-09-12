@@ -51,28 +51,12 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
   const [activeTab, setActiveTab] = useState("description");
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   // Fetch internship details
-  //   fetch(`http://127.0.0.1:5000/api/internships`)
-  //     .then(res => res.json())
-  //     .then(data => {
-  //       const selectedInternship = data.find(i => i.id === parseInt(internshipId));
-  //       setInternship(selectedInternship || null);
-  //     });
-
-  //   // Fetch candidates for this internship
-  //   fetch(`http://127.0.0.1:5000/api/internships/${internshipId}/candidates`)
-  //     .then(response => response.json())
-  //     .then(data => setCandidates(data))
-  //     .catch(error => console.error('Error fetching candidates for internship:', error));
-  // }, [internshipId]);
 
   useEffect(() => {
     setLoading(true);
 
     const apiUrl = import.meta.env.VITE_API_URL;
-    // Fetch details for the specific internship
+    
     fetch(`${apiUrl}/api/internships`)
       .then(res => res.json())
       .then((allInternships: Internship[]) => {
@@ -80,7 +64,6 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
         setInternship(selectedInternship || null);
       });
 
-    // Fetch candidates for this internship
     fetch(`${apiUrl}/api/internships/${internshipId}/candidates`)
       .then(response => response.json())
       .then((data: Candidate[]) => {

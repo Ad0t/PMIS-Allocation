@@ -5,8 +5,6 @@ import { CandidateListingPage } from "@/components/CandidateListingPage";
 import { InternshipDetailPage } from "@/components/InternshipDetailPage";
 import { InternshipsPage } from "@/components/InternshipsPage";
 import { CandidatesPage } from "@/components/CandidatesPage";
-// import { CompaniesPage } from "@/components/CompaniesPage";
-// import { ReportsPage } from "@/components/ReportsPage";
 
 
 type AppState = "login" | "dashboard" | "candidates" | "internships" | "internship-detail" | "candidates-db" | "companies" | "reports";
@@ -16,7 +14,7 @@ const Index = () => {
   const [selectedInternshipId, setSelectedInternshipId] = useState<string>("");
 
   const handleLogin = (username: string, password: string) => {
-    // In a real app, you'd validate credentials here
+    // to-do: validate credentials here
     console.log("Login attempt:", { username, password });
     setCurrentState("dashboard");
   };
@@ -95,29 +93,8 @@ const Index = () => {
     );
   }
 
-  // if (currentState === "companies") {
-  //   return (
-  //     <CompaniesPage
-  //       onLogout={handleLogout}
-  //       onNavigate={handleNavigate}
-  //       currentPage="companies"
-  //     />
-  //   );
-  // }
-
-  // if (currentState === "reports") {
-  //   return (
-  //     <ReportsPage
-  //       onLogout={handleLogout}
-  //       onNavigate={handleNavigate}
-  //       currentPage="reports"
-  //     />
-  //   );
-  // }
-
   return (
     <AdminDashboard
-      // onInternshipClick={handleInternshipClick}
       onLogout={handleLogout}
       onNavigate={handleNavigate}
     />

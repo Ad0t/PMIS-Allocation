@@ -2,11 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Government of India Admin Dashboard Design System */
 
 @layer base {
   :root {
-    /* Official Government Color Palette */
+    /* Color Palette */
     --background: 210 20% 98%;
     --foreground: 215 25% 27%;
 
@@ -16,12 +15,12 @@
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 27%;
 
-    /* Government Orange - Primary Brand */
+    /* Orange - Primary Brand */
     --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
     --primary-hover: 25 95% 48%;
 
-    /* Government Blue - Secondary */
+    /* Blue - Secondary */
     --secondary: 210 100% 40%;
     --secondary-foreground: 0 0% 100%;
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GovHeader } from "./GovHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,49 +8,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft, Search, User, MapPin, Eye, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const mockCandidates = [
-  {
-    id: "1",
-    name: "Priya Sharma",
-    skills: ["React", "Node.js", "TypeScript"],
-    location: "Delhi",
-    experience: "2 years",
-    education: "B.Tech Computer Science",
-  },
-  {
-    id: "2",
-    name: "Rajesh Kumar",
-    skills: ["Python", "Django", "SQL"],
-    location: "Mumbai",
-    experience: "1.5 years",
-    education: "B.E. Information Technology",
-  },
-  {
-    id: "3",
-    name: "Anjali Patel",
-    skills: ["Java", "Spring Boot", "AWS"],
-    location: "Bangalore",
-    experience: "3 years",
-    education: "M.Tech Software Engineering",
-  },
-  {
-    id: "4",
-    name: "Vikram Singh",
-    skills: ["JavaScript", "Vue.js", "MongoDB"],
-    location: "Pune",
-    experience: "2.5 years",
-    education: "B.Tech Electronics",
-  },
-  {
-    id: "5",
-    name: "Sneha Reddy",
-    skills: ["React Native", "Flutter", "Firebase"],
-    location: "Hyderabad",
-    experience: "2 years",
-    education: "B.Sc Computer Science",
-  },
-];
-
 interface CandidateListingPageProps {
   internshipId: string;
   onBack: () => void;
@@ -58,22 +15,42 @@ interface CandidateListingPageProps {
 }
 
 export function CandidateListingPage({ internshipId, onBack, onLogout }: CandidateListingPageProps) {
+  const [candidates, setCandidates] = useState([]);
+  const [internshipInfo, setInternshipInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL;
+      
+        // Fetch internship details
+        const internshipResponse = await fetch(`${apiUrl}/api/internships/${internshipId}`);
+        const internshipData = await internshipResponse.json();
+      
+        // Fetch candidates for that internship
+        const candidatesResponse = await fetch(`${apiUrl}/api/internships/${internshipId}/candidates`);
+        const candidatesData = await candidatesResponse.json();
+      
+        setInternshipInfo(internshipData);
+        setCandidates(candidatesData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  fetchData();
+  }, [internshipId]);
 
-  // Mock internship data based on ID
-  const internshipInfo = {
-    title: "Software Development Intern",
-    company: "GAIL (India) Limited",
-    totalApplicants: mockCandidates.length,
-  };
-
-  const filteredCandidates = mockCandidates.filter(candidate =>
-    candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    candidate.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    candidate.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCandidates = candidates.filter(candidate => // Now filters the fetched data
+  candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  candidate.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())) ||
+  candidate.location.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   const handleCandidateSelection = (candidateId: string, checked: boolean) => {
     if (checked) {
@@ -112,6 +89,14 @@ export function CandidateListingPage({ internshipId, onBack, onLogout }: Candida
   const isAllSelected = filteredCandidates.length > 0 && 
     filteredCandidates.every(candidate => selectedCandidates.includes(candidate.id));
 
+
+  if (loading) {
+    return <div className="text-center p-8">Loading candidates...</div>;
+  }
+  if (error) {
+    return <div className="text-center text-red-500 p-8">Error: {error}</div>;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <GovHeader onLogout={onLogout} />
@@ -125,10 +110,10 @@ export function CandidateListingPage({ internshipId, onBack, onLogout }: Candida
           </Button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-foreground">
-              Applicants for {internshipInfo.title}
+              Applicants for {internshipInfo ? internshipInfo.title : 'Loading...'}
             </h1>
             <p className="text-muted-foreground">
-              {internshipInfo.company} • {internshipInfo.totalApplicants} total applicants
+              {internshipInfo ? internshipInfo.company : '...'} • {internshipInfo.totalApplicants} total applicants
             </p>
           </div>
         </div>

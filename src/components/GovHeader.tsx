@@ -63,25 +63,7 @@ export function GovHeader({ currentUser = "Admin User", onLogout, onNavigate, cu
               >
                 Candidates
               </Button>
-              {/* <Button 
-                variant="ghost" 
-                className={currentPage === "companies" ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"}
-                onClick={() => onNavigate?.("companies")}
-              >
-                Companies
-              </Button> */}
-              {/* <Button 
-                variant="ghost" 
-                className={currentPage === "reports" ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"}
-                onClick={() => onNavigate?.("reports")}
-              >
-                Reports
-              </Button> */}
             </div>
-            {/* <Button variant="outline" size="sm">
-              <Menu className="h-4 w-4" />
-              Menu
-            </Button> */}
           </div>
         </nav>
       </div>
