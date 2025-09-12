@@ -1,132 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GovHeader } from "./GovHeader";
 import { InternshipTile } from "./InternshipTile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
 
-const mockInternships = [
-  {
-    id: "1",
-    title: "Software Development Intern",
-    company: "GAIL (India) Limited",
-    location: "New Delhi",
-    applicants: 245,
-    status: "active" as const,
-  },
-  {
-    id: "2",
-    title: "Data Analytics Intern",
-    company: "REC Limited",
-    location: "Mumbai",
-    applicants: 189,
-    status: "active" as const,
-  },
-  {
-    id: "3",
-    title: "Marketing Research Intern",
-    company: "Unilever India",
-    location: "Bangalore",
-    applicants: 156,
-    status: "closed" as const,
-  },
-  {
-    id: "4",
-    title: "Finance & Accounting Intern",
-    company: "ONGC",
-    location: "Chennai",
-    applicants: 203,
-    status: "active" as const,
-  },
-  {
-    id: "5",
-    title: "Human Resources Intern",
-    company: "NTPC Limited",
-    location: "Kolkata",
-    applicants: 178,
-    status: "closed" as const,
-  },
-  {
-    id: "6",
-    title: "Digital Marketing Intern",
-    company: "Bharti Airtel",
-    location: "Gurgaon",
-    applicants: 134,
-    status: "active" as const,
-  },
-  {
-    id: "7",
-    title: "Product Management Intern",
-    company: "Zomato",
-    location: "Gurgaon",
-    applicants: 312,
-    status: "active" as const,
-  },
-  {
-    id: "8",
-    title: "Graphic Design Intern",
-    company: "Swiggy",
-    location: "Bangalore",
-    applicants: 195,
-    status: "active" as const,
-  },
-  {
-    id: "9",
-    title: "Business Development Intern",
-    company: "Reliance Industries",
-    location: "Mumbai",
-    applicants: 289,
-    status: "closed" as const,
-  },
-  {
-    id: "10",
-    title: "Supply Chain Intern",
-    company: "ITC Limited",
-    location: "Kolkata",
-    applicants: 140,
-    status: "active" as const,
-  },
-  {
-    id: "11",
-    title: "Content Writing Intern",
-    company: "The Times of India",
-    location: "Noida",
-    applicants: 215,
-    status: "active" as const,
-  },
-  {
-    id: "12",
-    title: "Legal Intern",
-    company: "Tata Steel",
-    location: "Jamshedpur",
-    applicants: 98,
-    status: "closed" as const,
-  },
-  {
-    id: "13",
-    title: "Machine Learning Intern",
-    company: "Ola Cabs",
-    location: "Bangalore",
-    applicants: 450,
-    status: "active" as const,
-  },
-  {
-    id: "14",
-    title: "Public Relations Intern",
-    company: "Adani Group",
-    location: "Ahmedabad",
-    applicants: 162,
-    status: "active" as const,
-  },
-  {
-    id: "15",
-    title: "Cybersecurity Intern",
-    company: "Infosys",
-    location: "Pune",
-    applicants: 355,
-    status: "closed" as const,
-  },
-];
 
 interface InternshipsPageProps {
   onLogout: () => void;
@@ -136,11 +14,20 @@ interface InternshipsPageProps {
 }
 
 export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, currentPage }: InternshipsPageProps) {
+  const [internships, setInternships] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "closed">("all");
   const [filterCategory, setFilterCategory] = useState<"all" | "IT" | "Food Tech" | "Law" | "Finance" | "Healthcare">("all");
 
-  const filteredInternships = mockInternships.filter(internship => {
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/api/internships')
+      .then(response => response.json())
+      .then(data => setInternships(data))
+      .catch(error => console.error('Error fetching internships:', error));
+  }, []);
+
+
+  const filteredInternships = internships.filter(internship => {
     const matchesSearch = 
       internship.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       internship.company.toLowerCase().includes(searchTerm.toLowerCase());

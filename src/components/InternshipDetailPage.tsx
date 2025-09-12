@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GovHeader } from "./GovHeader";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -7,70 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowLeft, MapPin, Calendar, DollarSign, Sparkles } from "lucide-react";
 
-const mockInternship = {
-  id: "1",
-  title: "Software Development Intern",
-  company: "GAIL (India) Limited",
-  location: "New Delhi",
-  stipend: "₹15,000/month",
-  duration: "6 months",
-  description: "Join our dynamic software development team and work on cutting-edge projects that impact millions of users across India. You'll be developing web applications, mobile solutions, and contributing to our digital transformation initiatives.",
-  skillsRequired: ["React", "Node.js", "JavaScript", "Python", "SQL"],
-  responsibilities: [
-    "Develop and maintain web applications using modern frameworks",
-    "Collaborate with cross-functional teams to deliver high-quality software",
-    "Participate in code reviews and follow best practices",
-    "Contribute to technical documentation and testing procedures"
-  ]
-};
-
-const mockCandidates = [
-  {
-    id: 1,
-    name: "Priya Sharma",
-    education: "B.Tech Computer Science",
-    skills: ["React", "JavaScript", "Python"],
-    projects: "E-commerce Platform, Weather App",
-    status: "shortlisted",
-    ranking: 1
-  },
-  {
-    id: 2,
-    name: "Rahul Kumar",
-    education: "B.Tech Information Technology",
-    skills: ["Node.js", "MongoDB", "Express"],
-    projects: "Social Media App, Blog Platform",
-    status: "promising",
-    ranking: 2
-  },
-  {
-    id: 3,
-    name: "Ananya Patel",
-    education: "BCA",
-    skills: ["JavaScript", "React", "SQL"],
-    projects: "Task Manager, Portfolio Website",
-    status: "shortlisted",
-    ranking: 3
-  },
-  {
-    id: 4,
-    name: "Vikram Singh",
-    education: "B.Tech Computer Science",
-    skills: ["Python", "Django", "PostgreSQL"],
-    projects: "Inventory System, CRM Tool",
-    status: "not-recommended",
-    ranking: 4
-  },
-  {
-    id: 5,
-    name: "Sneha Gupta",
-    education: "M.Tech Software Engineering",
-    skills: ["React", "Node.js", "Docker"],
-    projects: "Microservices App, DevOps Pipeline",
-    status: "promising",
-    ranking: 5
-  }
-];
 
 interface InternshipDetailPageProps {
   internshipId: string;
@@ -79,11 +15,93 @@ interface InternshipDetailPageProps {
   onNavigate: (page: string) => void;
 }
 
+interface Internship {
+    id: number;
+    title: string;
+    company: string;
+    location: string;
+    applicants: number;
+    status: string;
+    stipend: string;
+    duration: string;
+    description: string;
+    skillsRequired: string[];
+    responsibilities: string[];
+}
+
+interface Candidate {
+    id: number;
+    name: string;
+    education: string;
+    skills: string[];
+    location: string;
+    projects: string;
+    status: 'shortlisted' | 'promising' | 'not-recommended';
+    ranking: number;
+}
+
 export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigate }: InternshipDetailPageProps) {
+  // const [internship, setInternship] = useState(null);
+  const [internship, setInternship] = useState<Internship | null>(null);
+  // const [candidates, setCandidates] = useState([]);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [aiProgress, setAiProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
+  const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   // Fetch internship details
+  //   fetch(`http://127.0.0.1:5000/api/internships`)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       const selectedInternship = data.find(i => i.id === parseInt(internshipId));
+  //       setInternship(selectedInternship || null);
+  //     });
+
+  //   // Fetch candidates for this internship
+  //   fetch(`http://127.0.0.1:5000/api/internships/${internshipId}/candidates`)
+  //     .then(response => response.json())
+  //     .then(data => setCandidates(data))
+  //     .catch(error => console.error('Error fetching candidates for internship:', error));
+  // }, [internshipId]);
+
+  useEffect(() => {
+    setLoading(true);
+
+    // Fetch details for the specific internship
+    fetch(`http://127.0.0.1:5000/api/internships`)
+      .then(res => res.json())
+      .then((allInternships: Internship[]) => {
+        const selectedInternship = allInternships.find(i => i.id === parseInt(internshipId));
+        setInternship(selectedInternship || null);
+      });
+
+    // Fetch candidates for this internship
+    fetch(`http://127.0.0.1:5000/api/internships/${internshipId}/candidates`)
+      .then(response => response.json())
+      .then((data: Candidate[]) => {
+        setCandidates(data);
+        setLoading(false); // Set loading to false after all data is fetched
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      });
+  }, [internshipId]);
+
+  if (loading || !internship) {
+    return (
+        <div className="flex items-center justify-center h-screen">
+            <p className="text-xl">
+                {loading ? "Loading internship details..." : "Internship not found."}
+            </p>
+        </div>
+    );
+  }
+
 
   const runAiShortlisting = () => {
     setShowProgress(true);
@@ -133,8 +151,8 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">{mockInternship.title}</h1>
-            <p className="text-lg text-muted-foreground">{mockInternship.company}</p>
+            <h1 className="text-3xl font-bold text-foreground">{internship.title}</h1>
+            <p className="text-lg text-muted-foreground">{internship.company}</p>
           </div>
         </div>
 
@@ -142,15 +160,15 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
         <div className="flex flex-wrap gap-6 mb-8 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />
-            {mockInternship.location}
+            {internship.location}
           </div>
           <div className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
-            {mockInternship.stipend}
+            {internship.stipend}
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            {mockInternship.duration}
+            {internship.duration}
           </div>
         </div>
 
@@ -165,11 +183,11 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <h2 className="text-xl font-semibold mb-4">About This Role</h2>
-                <p className="text-muted-foreground mb-6">{mockInternship.description}</p>
+                <p className="text-muted-foreground mb-6">{internship.description}</p>
                 
                 <h3 className="text-lg font-semibold mb-3">Skills Required</h3>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {mockInternship.skillsRequired.map((skill) => (
+                  {internship.skillsRequired.map((skill) => (
                     <Badge key={skill} variant="outline">{skill}</Badge>
                   ))}
                 </div>
@@ -178,7 +196,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <h3 className="text-lg font-semibold mb-3">Responsibilities</h3>
                 <ul className="space-y-2">
-                  {mockInternship.responsibilities.map((responsibility, index) => (
+                  {internship.responsibilities.map((responsibility, index) => (
                     <li key={index} className="flex items-start gap-2 text-muted-foreground">
                       <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                       {responsibility}
@@ -211,7 +229,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {mockCandidates.map((candidate) => (
+                    {candidates.map((candidate) => (
                       <TableRow key={candidate.id}>
                         <TableCell>{candidate.id}</TableCell>
                         <TableCell className="font-medium">{candidate.name}</TableCell>
@@ -275,7 +293,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {mockCandidates.map((candidate) => (
+                    {candidates.map((candidate) => (
                       <TableRow key={candidate.id}>
                         <TableCell>{candidate.id}</TableCell>
                         <TableCell className="font-medium">{candidate.name}</TableCell>
