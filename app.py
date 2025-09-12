@@ -74,4 +74,5 @@ def get_candidates_for_internship(internship_id):
     return jsonify(applied_candidates)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    pass
+    # app.run(debug=True)
