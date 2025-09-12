@@ -2,8 +2,13 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 
+origins = [
+    "https://pmisallocation.netlify.app/"
+    # "http://localhost:8080"
+]
+CORS(app, resources={r"/api/*": {"origins": origins}})
 # --- Mock Data ---
 internships_data = [
     { 
@@ -57,6 +62,10 @@ candidates_data = [
     { "id": 7, "name": "Vikram Rathod", "education": "B.Tech IT", "skills": ["Java", "Spring Boot", "MySQL"], "location": "Delhi", "applications": 1, "internship_ids": [1], "projects": "Library Management System", "status": "not-recommended", "ranking": 3 },
 ]
 # --- API Endpoints ---
+@app.route('/')
+def index():
+    return "You're not supposed to be here!"
+
 @app.route('/api/internships')
 def get_internships():
     return jsonify(internships_data)
@@ -74,5 +83,5 @@ def get_candidates_for_internship(internship_id):
     return jsonify(applied_candidates)
 
 if __name__ == '__main__':
-    pass
-    # app.run(debug=True)
+    # pass
+    app.run()
