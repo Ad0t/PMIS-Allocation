@@ -19,13 +19,21 @@ export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, curre
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "closed">("all");
   const [filterCategory, setFilterCategory] = useState<"all" | "IT" | "Food Tech" | "Law" | "Finance" | "Healthcare">("all");
 
+  // useEffect(() => {
+  //   fetch('http://127.0.0.1:5000/api/internships')
+  //     .then(response => response.json())
+  //     .then(data => setInternships(data))
+  //     .catch(error => console.error('Error fetching internships:', error));
+  // }, []);
+
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/internships')
+    // CHANGE IS HERE
+    const apiUrl = import.meta.env.VITE_API_URL;
+    fetch(`${apiUrl}/api/internships`)
       .then(response => response.json())
       .then(data => setInternships(data))
       .catch(error => console.error('Error fetching internships:', error));
   }, []);
-
 
   const filteredInternships = internships.filter(internship => {
     const matchesSearch = 

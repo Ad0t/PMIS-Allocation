@@ -71,8 +71,9 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
   useEffect(() => {
     setLoading(true);
 
+    const apiUrl = import.meta.env.VITE_API_URL;
     // Fetch details for the specific internship
-    fetch(`http://127.0.0.1:5000/api/internships`)
+    fetch(`${apiUrl}/api/internships`)
       .then(res => res.json())
       .then((allInternships: Internship[]) => {
         const selectedInternship = allInternships.find(i => i.id === parseInt(internshipId));
@@ -80,11 +81,11 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
       });
 
     // Fetch candidates for this internship
-    fetch(`http://127.0.0.1:5000/api/internships/${internshipId}/candidates`)
+    fetch(`${apiUrl}/api/internships/${internshipId}/candidates`)
       .then(response => response.json())
       .then((data: Candidate[]) => {
         setCandidates(data);
-        setLoading(false); // Set loading to false after all data is fetched
+        setLoading(false); 
       })
       .catch(error => {
         console.error('Error fetching data:', error);

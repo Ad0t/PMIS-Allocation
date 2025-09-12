@@ -6,56 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Filter, Eye } from "lucide-react";
 
-// const mockCandidates = [
-//   {
-//     id: "1",
-//     name: "Priya Sharma",
-//     education: "B.Tech Computer Science",
-//     skills: ["React", "Node.js", "TypeScript"],
-//     location: "Delhi",
-//     applications: 3,
-//   },
-//   {
-//     id: "2",
-//     name: "Rahul Kumar",
-//     education: "MBA Finance",
-//     skills: ["Excel", "Financial Analysis", "SQL"],
-//     location: "Mumbai",
-//     applications: 2,
-//   },
-//   {
-//     id: "3",
-//     name: "Anita Singh",
-//     education: "B.Com Marketing",
-//     skills: ["Digital Marketing", "SEO", "Content Writing"],
-//     location: "Bangalore",
-//     applications: 4,
-//   },
-//   {
-//     id: "4",
-//     name: "Amit Patel",
-//     education: "B.Tech Mechanical",
-//     skills: ["AutoCAD", "SolidWorks", "Project Management"],
-//     location: "Chennai",
-//     applications: 1,
-//   },
-//   {
-//     id: "5",
-//     name: "Sneha Gupta",
-//     education: "BCA",
-//     skills: ["Python", "Data Analysis", "Machine Learning"],
-//     location: "Pune",
-//     applications: 2,
-//   },
-//   {
-//     id: "6",
-//     name: "Vikash Yadav",
-//     education: "B.Tech Electronics",
-//     skills: ["VLSI", "Embedded Systems", "C++"],
-//     location: "Hyderabad",
-//     applications: 3,
-//   },
-// ];
 
 interface CandidatesPageProps {
   onLogout: () => void;
@@ -67,13 +17,14 @@ export function CandidatesPage({ onLogout, onNavigate, currentPage }: Candidates
   const [candidates, setCandidates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/candidates')
+    fetch(`${apiUrl}/api/candidates`)
       .then(response => response.json())
       .then(data => setCandidates(data))
       .catch(error => console.error('Error fetching candidates:', error));
   }, []);
-
   const filteredCandidates = candidates.filter(candidate => {
     const searchLower = searchTerm.toLowerCase();
     return (
