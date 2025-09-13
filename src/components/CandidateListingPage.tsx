@@ -25,13 +25,12 @@ export function CandidateListingPage({ internshipId, onBack, onLogout }: Candida
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL;
+        // const apiUrl = import.meta.env.VITE_API_URL;
+        const apiUrl = `http://127.0.0.1:5000/`;
       
-        // Fetch internship details
         const internshipResponse = await fetch(`${apiUrl}/api/internships/${internshipId}`);
         const internshipData = await internshipResponse.json();
-      
-        // Fetch candidates for that internship
+
         const candidatesResponse = await fetch(`${apiUrl}/api/internships/${internshipId}/candidates`);
         const candidatesData = await candidatesResponse.json();
       
@@ -46,7 +45,7 @@ export function CandidateListingPage({ internshipId, onBack, onLogout }: Candida
   fetchData();
   }, [internshipId]);
 
-  const filteredCandidates = candidates.filter(candidate => // Now filters the fetched data
+  const filteredCandidates = candidates.filter(candidate => 
   candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
   candidate.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())) ||
   candidate.location.toLowerCase().includes(searchTerm.toLowerCase())

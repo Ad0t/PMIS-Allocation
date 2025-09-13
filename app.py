@@ -1,12 +1,9 @@
-import os
 from flask import Flask, jsonify
 from flask_cors import CORS
-# from waitress import serve
-import logging
 
 # port = int(os.environ.get("PORT", 8080))
 # serve(app, host='0.0.0.0', port=port)
-logging.basicConfig(level=logging.INFO)
+
 app = Flask(__name__)
 CORS(app)
 
@@ -89,9 +86,9 @@ def get_candidates_for_internship(internship_id):
     ]
     return jsonify(applied_candidates)
 
-# if __name__ == '__main__':
-#     # app.run(host='0.0.0.0', port=port, debug=True)
-#     port = int(os.environ.get("PORT", 8080))
-#     serve(app, host='0.0.0.0', port=port)
-#     # pass
-    # app.run()
+if __name__ == '__main__':
+    # app.run(host='0.0.0.0', port=port, debug=True)
+    # port = int(os.environ.get("PORT", 8080))
+    # serve(app, host='0.0.0.0', port=port)
+    # pass
+    app.run()

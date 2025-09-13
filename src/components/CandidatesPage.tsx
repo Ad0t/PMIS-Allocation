@@ -17,7 +17,8 @@ export function CandidatesPage({ onLogout, onNavigate, currentPage }: Candidates
   const [candidates, setCandidates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+  // const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = `http://127.0.0.1:5000/`;
 
   useEffect(() => {
     fetch(`${apiUrl}/api/candidates`)

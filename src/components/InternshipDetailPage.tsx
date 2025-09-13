@@ -55,7 +55,8 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
   useEffect(() => {
     setLoading(true);
 
-    const apiUrl = import.meta.env.VITE_API_URL;
+    // const apiUrl = import.meta.env.VITE_API_URL;
+    const apiUrl = `http://127.0.0.1:5000`;
     
     fetch(`${apiUrl}/api/internships`)
       .then(res => res.json())
