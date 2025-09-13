@@ -1,0 +1,13 @@
+internship_id,category,job_title,job_description,job_skill_set,job_capacity,status,location_type,location,duration_hours,company_name,stipend
+1,technology,machine vision / computer vision intern,"work on image recognition, object detection, and ai-powered vision systems.","machine learning, computer vision, image processing",65,active,remote,hyderabad,4,tcs research,18721
+2,technology,ui/ux & frontend development intern,assist in designing user interfaces and improving user experience for web/mobile apps.,"ui design, ux research, frontend development",25,active,local,gurgaon,4,infosys digital,22071
+3,technology,robotics & automation intern,contribute to automation projects including robotic arm control and iot-based robotics.,"robotics, automation, iot",91,active,urban,bangalore,6,abb india,22198
+4,technology,software testing & quality assurance intern,"develop automated test cases, perform bug tracking, and ensure software quality.","software testing, qa automation, bug tracking",86,active,local,bangalore,5,wipro qa labs,22482
+5,business,product management intern,"support product lifecycle management, strategy planning, and business analysis.","product management, business analysis, strategy planning",30,closed,local,pune,2,flipkart,13038
+6,finance,finance intern,"assist in financial reporting, auditing, and budgeting for corporate clients.","financial analysis, accounting, budgeting",92,active,remote,delhi,2,icici bank,10804
+7,healthcare,healthcare research intern,"work on healthcare data analysis, biomedical research, and patient record systems.","healthcare analytics, biomedical research, data analysis",25,closed,urban,delhi,1,apollo hospitals,10820
+8,education,edtech intern,"assist in content development, e-learning modules, and training support.","e-learning, content development, educational technology",93,closed,remote,mumbai,5,byju's,8727
+9,marketing,digital marketing intern,"work on seo, social media campaigns, and market research for brand growth.","seo, social media marketing, market research",94,closed,urban,hyderabad,3,unacademy,9987
+10,media,journalism intern,"assist in content writing, news reporting, and editorial research.","content writing, news reporting, editorial research",80,active,urban,hyderabad,2,the hindu,8648
+11,law,legal intern,"support legal research, contract drafting, and compliance documentation.","legal research, contract drafting, compliance",22,active,urban,mumbai,5,khaitan & co.,11935
+12,agriculture,agritech intern,"work on sustainable farming technologies, crop monitoring, and data collection.","agricultural technology, crop monitoring, sustainability",44,closed,local,chennai,5,itc agri business,9002
