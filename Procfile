@@ -1,1 +1,1 @@
-web: serve -s dist -p $PORT
+web: gunicorn app:app
