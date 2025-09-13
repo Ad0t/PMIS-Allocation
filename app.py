@@ -1,5 +1,11 @@
+import os
 from flask import Flask, jsonify
 from flask_cors import CORS
+from waitress import serve
+from app import app
+
+# port = int(os.environ.get("PORT", 8080))
+# serve(app, host='0.0.0.0', port=port)
 
 app = Flask(__name__)
 # CORS(app)
@@ -10,8 +16,6 @@ origins = [
 ]
 CORS(app, resources={r"/api/*": {"origins": origins}})
 
-# port = int(os.environ.get("PORT", 8080))
-# serve(app, host='0.0.0.0', port=port)
 # --- Mock Data ---
 internships_data = [
     { 
@@ -86,5 +90,8 @@ def get_candidates_for_internship(internship_id):
     return jsonify(applied_candidates)
 
 if __name__ == '__main__':
-    pass
+    # app.run(host='0.0.0.0', port=port, debug=True)
+    port = int(os.environ.get("PORT", 8080))
+    serve(app, host='0.0.0.0', port=port)
+    # pass
     # app.run()
