@@ -6,9 +6,12 @@ app = Flask(__name__)
 
 origins = [
     "https://pmisallocation.netlify.app/"
-    # "http://localhost:8080"
+    "http://localhost:8080"
 ]
 CORS(app, resources={r"/api/*": {"origins": origins}})
+
+# port = int(os.environ.get("PORT", 8080))
+# serve(app, host='0.0.0.0', port=port)
 # --- Mock Data ---
 internships_data = [
     { 
