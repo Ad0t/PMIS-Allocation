@@ -1,61 +1,20 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+from supabase import create_client, Client
+import os
+from dotenv import load_dotenv
 
-# port = int(os.environ.get("PORT", 8080))
-# serve(app, host='0.0.0.0', port=port)
-
+load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# origins = [
-#     "https://pmisallocation.netlify.app/"
-#     "http://localhost:8080"
-# ]
-# CORS(app, resources={r"/api/*": {"origins": origins}})
+url = os.environ.get("SUPABASE_URL")
+key = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(supabase_url=url, supabase_key=key)
+
+
 
 # --- Mock Data ---
-internships_data = [
-    { 
-        "id": 1, 
-        "title": "Software Development Intern", 
-        "company": "GAIL (India) Limited", 
-        "location": "New Delhi", 
-        "applicants": 245, 
-        "status": "active",
-        "stipend": "₹ 25,000/month",
-        "duration": "6 Months",
-        "description": "Join our dynamic team to work on cutting-edge software solutions for the energy sector. You will be involved in the full software development lifecycle, from conception to deployment.",
-        "skillsRequired": ["Python", "React", "Node.js", "MongoDB", "REST APIs"],
-        "responsibilities": [
-            "Develop and maintain web applications.",
-            "Collaborate with cross-functional teams.",
-            "Write clean, scalable code.",
-            "Test and deploy applications and systems."
-        ]
-    },
-    { 
-        "id": 2, 
-        "title": "Data Analytics Intern", 
-        "company": "REC Limited", 
-        "location": "Mumbai", 
-        "applicants": 189, 
-        "status": "active",
-        "stipend": "₹ 20,000/month",
-        "duration": "3 Months",
-        "description": "This internship focuses on analyzing large datasets to extract meaningful insights that will drive business decisions in the renewable energy financing space.",
-        "skillsRequired": ["SQL", "Python", "Pandas", "Tableau", "Statistics"],
-        "responsibilities": [
-            "Collect and interpret data.",
-            "Identify patterns and trends in data sets.",
-            "Work alongside teams to establish business needs.",
-            "Define new data collection and analysis processes."
-        ]
-    },
-    { "id": 3, "title": "Marketing Research Intern", "company": "Unilever India", "location": "Bangalore", "applicants": 156, "status": "closed", "stipend": "₹ 15,000/month", "duration": "4 Months", "description": "Support the marketing team in daily administrative tasks and help organize marketing events.", "skillsRequired": ["SEO", "Content Writing", "Social Media"], "responsibilities": ["Conduct market research.", "Assist in marketing campaigns."]},
-    { "id": 4, "title": "Human Resources Intern", "company": "Tata Power", "location": "Pune", "applicants": 98, "status": "active", "stipend": "₹ 18,000/month", "duration": "6 Months", "description": "An exciting opportunity to learn the ropes of HR in a leading power company.", "skillsRequired": ["MS Office", "Communication", "Recruitment"], "responsibilities": ["Assist with recruitment process.", "Help with onboarding new hires."]},
-    { "id": 5, "title": "Cloud DevOps Intern", "company": "HCLTech", "location": "Noida", "applicants": 215, "status": "active", "stipend": "₹ 30,000/month", "duration": "6 Months", "description": "Work with our cloud infrastructure team to build and maintain our CI/CD pipelines.", "skillsRequired": ["AWS", "Docker", "Kubernetes", "Jenkins"], "responsibilities": ["Manage cloud infrastructure.", "Automate deployment processes."]},
-]
-
 candidates_data = [
     { "id": 1, "name": "Priya Sharma", "education": "B.Tech Computer Science", "skills": ["React", "Node.js", "TypeScript"], "location": "Delhi", "applications": 3, "internship_ids": [1, 3, 5], "projects": "E-commerce Website", "status": "shortlisted", "ranking": 1 },
     { "id": 2, "name": "Rahul Kumar", "education": "MBA Finance", "skills": ["Excel", "Financial Analysis", "SQL"], "location": "Mumbai", "applications": 2, "internship_ids": [2], "projects": "Market Analysis Report", "status": "shortlisted", "ranking": 1 },
@@ -65,18 +24,53 @@ candidates_data = [
     { "id": 6, "name": "Arjun Mehta", "education": "B.Sc Statistics", "skills": ["Python", "Pandas", "Tableau"], "location": "Mumbai", "applications": 1, "internship_ids": [2], "projects": "Sales Dashboard", "status": "promising", "ranking": 2 },
     { "id": 7, "name": "Vikram Rathod", "education": "B.Tech IT", "skills": ["Java", "Spring Boot", "MySQL"], "location": "Delhi", "applications": 1, "internship_ids": [1], "projects": "Library Management System", "status": "not-recommended", "ranking": 3 },
 ]
+def capitalize_words(s):
+    if isinstance(s, str):
+        return ' '.join(word.capitalize() for word in s.split())
+    return s
+
 # --- API Endpoints ---
+@app.route('/api/data/<table_name>')
+def get_table_data(table_name):
+    """
+    Fetches all data from the specified table in Supabase.
+    """
+    try:
+        response = supabase.table(table_name).select("*").execute()
+        return jsonify(response.data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/')
 def index():
     return "You're not supposed to be here!"
 
 @app.route('/api/internships')
 def get_internships():
-    return jsonify(internships_data)
+    response = supabase.table('internships').select("*").execute()
+    capitalized_internships = []
+    for internship in response.data:
+        new_internship = {}
+        for key, value in internship.items():
+            if isinstance(value, str):
+                new_internship[key] = capitalize_words(value)
+            elif isinstance(value, list):
+                new_internship[key] = [capitalize_words(item) if isinstance(item, str) else item for item in value]
+            else:
+                new_internship[key] = value
+        capitalized_internships.append(new_internship)
+    return jsonify(capitalized_internships)
 
 @app.route('/api/candidates')
 def get_candidates():
     return jsonify(candidates_data)
+
+
+@app.route('/api/candidate_db')
+def get_candidates_database():
+    response = supabase.table('candidates').select("id, name, education, skills, projects").execute()
+    return jsonify(response.data)
 
 @app.route('/api/internships/<int:internship_id>/candidates')
 def get_candidates_for_internship(internship_id):
@@ -87,8 +81,4 @@ def get_candidates_for_internship(internship_id):
     return jsonify(applied_candidates)
 
 if __name__ == '__main__':
-    # app.run(host='0.0.0.0', port=port, debug=True)
-    # port = int(os.environ.get("PORT", 8080))
-    # serve(app, host='0.0.0.0', port=port)
-    # pass
     app.run()

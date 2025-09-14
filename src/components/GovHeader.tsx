@@ -17,7 +17,6 @@ export function GovHeader({ currentUser = "Admin User", onLogout, onNavigate, cu
         {/* Top bar with logos */}
         <div className="flex items-center justify-between py-3 border-b border-border">
           <div className="flex items-center space-x-6">
-            {/* <img src={govEmblem} alt="Government of India" className="h-12 w-12" /> */}
             <img src={mcaLogo} alt="Ministry of Corporate Affairs" className="h-16 w-auto" />
             <img src={pmInternshipLogo} alt="PM Internship Scheme" className="h-16 w-auto" />
           </div>

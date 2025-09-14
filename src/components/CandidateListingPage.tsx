@@ -109,10 +109,10 @@ export function CandidateListingPage({ internshipId, onBack, onLogout }: Candida
           </Button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-foreground">
-              Applicants for {internshipInfo ? internshipInfo.title : 'Loading...'}
+              Applicants for {internshipInfo ? internshipInfo.job_title : 'Loading...'}
             </h1>
             <p className="text-muted-foreground">
-              {internshipInfo ? internshipInfo.company : '...'} • {internshipInfo.totalApplicants} total applicants
+              {internshipInfo ? internshipInfo.company_name : '...'} • {internshipInfo.totalApplicants} total applicants
             </p>
           </div>
         </div>
