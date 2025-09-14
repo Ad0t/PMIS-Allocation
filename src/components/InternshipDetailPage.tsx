@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, MapPin, Calendar, DollarSign, Sparkles } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, IndianRupee, Sparkles } from "lucide-react";
 
 
 interface InternshipDetailPageProps {
@@ -17,16 +17,15 @@ interface InternshipDetailPageProps {
 
 interface Internship {
     id: number;
-    title: string;
-    company: string;
+    job_title: string;
+    company_name: string;
     location: string;
-    applicants: number;
     status: string;
     stipend: string;
-    duration: string;
-    description: string;
-    skillsRequired: string[];
-    responsibilities: string[];
+    duration_hours: number;
+    job_description: string;
+    job_skill_set: string[];
+    job_responsibilities: string[];
 }
 
 interface Candidate {
@@ -41,9 +40,7 @@ interface Candidate {
 }
 
 export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigate }: InternshipDetailPageProps) {
-  // const [internship, setInternship] = useState(null);
   const [internship, setInternship] = useState<Internship | null>(null);
-  // const [candidates, setCandidates] = useState([]);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [aiProgress, setAiProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
@@ -136,8 +133,8 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">{internship.title}</h1>
-            <p className="text-lg text-muted-foreground">{internship.company}</p>
+            <h1 className="text-3xl font-bold text-foreground">{internship.job_title}</h1>
+            <p className="text-lg text-muted-foreground">{internship.company_name}</p>
           </div>
         </div>
 
@@ -148,12 +145,12 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
             {internship.location}
           </div>
           <div className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4" />
+            <IndianRupee className="h-4 w-4" />
             {internship.stipend}
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            {internship.duration}
+            {internship.duration_hours} Months
           </div>
         </div>
 
@@ -168,11 +165,11 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <h2 className="text-xl font-semibold mb-4">About This Role</h2>
-                <p className="text-muted-foreground mb-6">{internship.description}</p>
+                <p className="text-muted-foreground mb-6">{internship.job_description}</p>
                 
                 <h3 className="text-lg font-semibold mb-3">Skills Required</h3>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {internship.skillsRequired.map((skill) => (
+                  {internship.job_skill_set.map((skill) => (
                     <Badge key={skill} variant="outline">{skill}</Badge>
                   ))}
                 </div>
@@ -181,7 +178,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <h3 className="text-lg font-semibold mb-3">Responsibilities</h3>
                 <ul className="space-y-2">
-                  {internship.responsibilities.map((responsibility, index) => (
+                  {internship.job_responsibilities.map((responsibility, index) => (
                     <li key={index} className="flex items-start gap-2 text-muted-foreground">
                       <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                       {responsibility}

@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Lock } from "lucide-react";
-import govEmblem from "@/assets/gov-emblem.png";
 import mcaLogo from "@/assets/Ministry_of_Corporate_Affairs_India.png";
 import pmInternshipLogo from "@/assets/PMIS_Logo.png";
 

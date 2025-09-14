@@ -13,38 +13,45 @@ interface InternshipsPageProps {
   currentPage: string;
 }
 
+interface Internship {
+  id: number;
+  job_title: string;
+  company_name: string;
+  location: string;
+  job_capacity: number;
+  status: "active" | "closed";
+  category: string;
+}
+
 export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, currentPage }: InternshipsPageProps) {
-  const [internships, setInternships] = useState([]);
+  const [internships, setInternships] = useState<Internship[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "closed">("all");
-  const [filterCategory, setFilterCategory] = useState<"all" | "IT" | "Food Tech" | "Law" | "Finance" | "Healthcare">("all");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
 
   useEffect(() => {
-
     // const apiUrl = import.meta.env.VITE_API_URL;
     const apiUrl = `http://127.0.0.1:5000/`;
     fetch(`${apiUrl}/api/internships`)
       .then(response => response.json())
-      .then(data => setInternships(data))
+      .then((data: Internship[]) => {
+        setInternships(data);
+        const uniqueCategories = Array.from(new Set(data.map(internship => internship.category)));
+        setCategories(uniqueCategories);
+      })
       .catch(error => console.error('Error fetching internships:', error));
   }, []);
 
   const filteredInternships = internships.filter(internship => {
-    const matchesSearch = 
-      internship.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      internship.company.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === "all" || internship.status === filterStatus;
-    
-    // Simple category matching based on title keywords
-    const matchesCategory = filterCategory === "all" || 
-      (filterCategory === "IT" && (internship.title.toLowerCase().includes("software") || internship.title.toLowerCase().includes("data"))) ||
-      (filterCategory === "Finance" && internship.title.toLowerCase().includes("finance")) ||
-      (filterCategory === "Food Tech" && internship.title.toLowerCase().includes("food")) ||
-      (filterCategory === "Law" && internship.title.toLowerCase().includes("legal")) ||
-      (filterCategory === "Healthcare" && internship.title.toLowerCase().includes("health"));
-    
-    return matchesSearch && matchesStatus && matchesCategory;
-  });
+  const matchesSearch =
+    internship.job_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    internship.company_name.toLowerCase().includes(searchTerm.toLowerCase());
+  const matchesStatus = filterStatus === "all" || internship.status.toLowerCase() === filterStatus;
+  const matchesCategory = filterCategory === "all" || internship.category.toLowerCase() === filterCategory.toLowerCase();
+
+  return matchesSearch && matchesStatus && matchesCategory;
+});
 return (
     <div className="min-h-screen bg-background">
       <GovHeader onLogout={onLogout} onNavigate={onNavigate} currentPage={currentPage} />
@@ -64,41 +71,17 @@ return (
           >
             All
           </Button>
-          <Button
-            variant={filterCategory === "IT" ? "government" : "outline"}
-            onClick={() => setFilterCategory("IT")}
-            size="sm"
-          >
-            IT
-          </Button>
-          <Button
-            variant={filterCategory === "Food Tech" ? "government" : "outline"}
-            onClick={() => setFilterCategory("Food Tech")}
-            size="sm"
-          >
-            Food Tech
-          </Button>
-          <Button
-            variant={filterCategory === "Law" ? "government" : "outline"}
-            onClick={() => setFilterCategory("Law")}
-            size="sm"
-          >
-            Law
-          </Button>
-          <Button
-            variant={filterCategory === "Finance" ? "government" : "outline"}
-            onClick={() => setFilterCategory("Finance")}
-            size="sm"
-          >
-            Finance
-          </Button>
-          <Button
-            variant={filterCategory === "Healthcare" ? "government" : "outline"}
-            onClick={() => setFilterCategory("Healthcare")}
-            size="sm"
-          >
-            Healthcare
-          </Button>
+          {categories.map((category) => (
+            <Button
+              key={category}
+              variant={filterCategory.toLowerCase() === category ? "government" : "outline"}
+              onClick={() => setFilterCategory(category)}
+              size="sm"
+              className="capitalize"
+            >
+              {category}
+            </Button>
+          ))}
         </div>
 
         {/* Search and Status Filters */}
@@ -140,9 +123,19 @@ return (
         {/* Internship Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredInternships.map((internship) => (
+            // <InternshipTile
+            //   key={internship.id}
+            //   {...internship}
+            //   onClick={onInternshipClick}
+            // />
             <InternshipTile
               key={internship.id}
-              {...internship}
+              id={internship.id.toString()}
+              job_title={internship.job_title}
+              company_name={internship.company_name}
+              location={internship.location}
+              job_capacity={internship.job_capacity}
+              status={internship.status}
               onClick={onInternshipClick}
             />
           ))}

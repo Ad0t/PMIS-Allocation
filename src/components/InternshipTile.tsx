@@ -5,22 +5,24 @@ import { cn } from "@/lib/utils";
 
 interface InternshipTileProps {
   id: string;
-  title: string;
-  company: string;
+  job_title: string;
+  company_name: string;
   companyLogo?: string;
   location: string;
-  applicants: number;
+  job_capacity: number;
+  // applicants: number;
   status: "active" | "closed";
   onClick?: (id: string) => void;
 }
 
 export function InternshipTile({
   id,
-  title,
-  company,
+  job_title,
+  company_name,
   companyLogo,
   location,
-  applicants,
+  job_capacity,
+  // applicants,
   status,
   onClick
 }: InternshipTileProps) {
@@ -40,15 +42,15 @@ export function InternshipTile({
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             {companyLogo ? (
-              <img src={companyLogo} alt={company} className="h-12 w-12 rounded-lg object-cover" />
+              <img src={companyLogo} alt={company_name} className="h-12 w-12 rounded-lg object-cover" />
             ) : (
               <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
-                {company.substring(0, 2).toUpperCase()}
+                {company_name.substring(0, 2).toUpperCase()}
               </div>
             )}
             <div>
-              <h3 className="font-semibold text-lg leading-tight">{title}</h3>
-              <p className="text-sm text-muted-foreground">{company}</p>
+              <h3 className="font-semibold text-lg leading-tight">{job_title}</h3>
+              <p className="text-sm text-muted-foreground">{company_name}</p>
             </div>
           </div>
           <Badge 
@@ -71,7 +73,7 @@ export function InternshipTile({
           </div>
           <div className="flex items-center space-x-1">
             <Users className="h-4 w-4" />
-            <span>{applicants} applicants</span>
+            <span>{job_capacity} applicants</span>
           </div>
         </div>
       </CardContent>
