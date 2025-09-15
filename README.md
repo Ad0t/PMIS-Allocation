@@ -96,6 +96,15 @@ If omitted, the frontend will make same-origin requests (useful when Flask serve
    ```
 6. Deploy – once running, open the public URL and check `/health`.
 
+If you encounter a PATH issue with `waitress-serve`, the Procfile now uses:
+```
+web: python -m waitress --host=0.0.0.0 --port=$PORT app:app
+```
+You can also use the fallback script locally:
+```
+python start_server.py
+```
+
 ### Verifying Deployment
 ```bash
 curl https://your-railway-domain.up.railway.app/health

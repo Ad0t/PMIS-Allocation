@@ -10,7 +10,7 @@ commands = [
 
 [deploy]
 # Expose the Python web service using Waitress (Procfile also present)
-startCommand = "waitress-serve --host=0.0.0.0 --port=$PORT app:app"
+startCommand = "python -m waitress --host=0.0.0.0 --port=$PORT app:app"
 
 [env]
 # Set the frontend build directory if different from default 'dist'
