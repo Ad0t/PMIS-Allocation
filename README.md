@@ -163,6 +163,38 @@ Visit: http://127.0.0.1:5000
 - Keep frontend API calls pointing to the same origin (relative `/api/...`) in production for simplicity.
 - If you prefer separate deployments, remove `railway.toml` or adjust commands to skip `npm run build`.
 
+## Deployment Using Dockerfile (Alternative Recommended When Build Detection Misbehaves)
+This repo now includes a `Dockerfile` implementing a two-stage build:
+1. Node (Vite) build stage produces `dist/`.
+2. Python slim image runs Flask via Waitress and serves static build.
+
+### Railway Using Dockerfile
+Railway auto-detects a root `Dockerfile` and will build it instead of Nixpacks.
+If Nixpacks still runs, explicitly enable Docker deployment in the service settings.
+
+### Manual Build & Run (Local)
+```bash
+docker build -t pmis-app .
+docker run -p 8000:8000 --env SUPABASE_URL=... --env SUPABASE_KEY=... pmis-app
+```
+Visit: http://localhost:8000/health
+
+### Environment Variables to Pass
+`SUPABASE_URL`, `SUPABASE_KEY`, `CORS_ORIGINS`, `LOG_LEVEL`, `ALLOW_EMPTY_FALLBACK` (optional).
+
+### Why Use Dockerfile
+- Avoids differing Node/Python toolchains on ephemeral builders.
+- Ensures consistent build reproducibility.
+- Smaller runtime surface (ships only production deps and built assets).
+
+## Nixpacks Dual Runtime (If Not Using Dockerfile)
+When relying on Railway's Nixpacks instead of the Dockerfile, `nixpacks.toml` is provided to force both Python and Node toolchains:
+```
+[phases.setup]
+nixPkgs = ["python312", "nodejs_20"]
+```
+This ensures the `railway_start.sh` script finds `python`/`python3` and installs dependencies before starting Waitress. Prefer Dockerfile for stricter reproducibility.
+
 ## Optional: Serve Built Frontend Separately
 Typical pattern:
 - Deploy backend (this repo) on Railway.
