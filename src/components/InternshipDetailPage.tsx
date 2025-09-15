@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiJson } from "@/lib/api";
 import { GovHeader } from "./GovHeader";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -51,27 +52,16 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
 
   useEffect(() => {
     setLoading(true);
-
-    // const apiUrl = import.meta.env.VITE_API_URL;
-    const apiUrl = `http://127.0.0.1:5000`;
-    
-    fetch(`${apiUrl}/api/internships`)
-      .then(res => res.json())
-      .then((allInternships: Internship[]) => {
-        const selectedInternship = allInternships.find(i => i.id === parseInt(internshipId));
-        setInternship(selectedInternship || null);
-      });
-
-    fetch(`${apiUrl}/api/internships/${internshipId}/candidates`)
-      .then(response => response.json())
-      .then((data: Candidate[]) => {
-        setCandidates(data);
-        setLoading(false); 
+    Promise.all([
+      apiJson<Internship>(`/api/internships/${internshipId}`),
+      apiJson<Candidate[]>(`/api/internships/${internshipId}/candidates`)
+    ])
+      .then(([internshipData, candidateData]) => {
+        setInternship(internshipData);
+        setCandidates(candidateData);
       })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      });
+      .catch(error => console.error('Error fetching data:', error))
+      .finally(() => setLoading(false));
   }, [internshipId]);
 
   if (loading || !internship) {

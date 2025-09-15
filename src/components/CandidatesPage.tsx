@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiJson } from "@/lib/api";
 import { GovHeader } from "./GovHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,12 +18,8 @@ export function CandidatesPage({ onLogout, onNavigate, currentPage }: Candidates
   const [candidates, setCandidates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // const apiUrl = import.meta.env.VITE_API_URL;
-  const apiUrl = `http://127.0.0.1:5000/`;
-
   useEffect(() => {
-    fetch(`${apiUrl}/api/candidates`)
-      .then(response => response.json())
+    apiJson<any[]>("/api/candidates") // eslint-disable-line @typescript-eslint/no-explicit-any
       .then(data => setCandidates(data))
       .catch(error => console.error('Error fetching candidates:', error));
   }, []);

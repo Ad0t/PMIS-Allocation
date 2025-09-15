@@ -1,0 +1,17 @@
+# Railway configuration for combined build (frontend + backend)
+
+[build]
+# Install Python & Node deps then build frontend
+commands = [
+  "pip install -r requirements.txt",
+  "npm install",
+  "npm run build"
+]
+
+[deploy]
+# Expose the Python web service using Waitress (Procfile also present)
+startCommand = "waitress-serve --host=0.0.0.0 --port=$PORT app:app"
+
+[env]
+# Set the frontend build directory if different from default 'dist'
+FRONTEND_BUILD_DIR = "dist"
