@@ -122,16 +122,18 @@ Two options:
 `railway.toml` defines:
 ```toml
 [build]
-commands = [
-   "pip install -r requirements.txt",
-   "npm install",
-   "npm run build"
-]
+commands = ["chmod +x railway_start.sh || echo 'chmod skipped'"]
 [deploy]
-startCommand = "waitress-serve --host=0.0.0.0 --port=$PORT app:app"
+startCommand = "bash railway_start.sh"
 [env]
 FRONTEND_BUILD_DIR = "dist"
 ```
+
+The script `railway_start.sh` performs:
+1. `pip install -r requirements.txt`
+2. `npm install`
+3. `npm run build`
+4. Launches `python -m waitress ...`
 
 During build, Vite outputs to `dist/`. The Flask app is configured (`app.py`) with `static_folder=dist` and will:
 - Serve `index.html` at `/` if present.
