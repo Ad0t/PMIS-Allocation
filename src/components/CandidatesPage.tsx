@@ -39,7 +39,7 @@ export function CandidatesPage({ onLogout, onNavigate, currentPage }: Candidates
           <div className="lg:col-span-2 bg-card p-6 rounded-lg border shadow-sm">
             {submitted ? (
               <div className="text-center py-12">
-                <h3 className="text-2xl font-semibold mb-2">Thanks for reaching out!</h3>
+                <h3 className="text-2xl font-semibold mb-2">Thanks for reaching out !</h3>
                 <p className="text-muted-foreground">We have received your message and will get back to you soon.</p>
                 <Button className="mt-6" onClick={() => { setSubmitted(false); setName(""); setEmail(""); setSubject(""); setMessage(""); }}>Send another message</Button>
               </div>
