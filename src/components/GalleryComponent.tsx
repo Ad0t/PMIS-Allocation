@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowRightCircle, Camera, Video } from 'lucide-react';
+import v1 from '@/assets/1.mp4';
+import v2 from '@/assets/2.mp4';
+import v3 from '@/assets/3.mp4';
 
 const photos = [
   { src: 'https://placehold.co/600x400/orange/white?text=Intern+1', alt: 'Intern working on machinery' },
@@ -16,9 +19,9 @@ const photos = [
 ];
 
 const videos = [
-  { src: 'https://placehold.co/600x400/000000/ffffff?text=Video+1', alt: 'Video of an intern' },
-  { src: 'https://placehold.co/600x400/000000/ffffff?text=Video+2', alt: 'Video of a workshop' },
-  { src: 'https://placehold.co/600x400/000000/ffffff?text=Video+3', alt: 'Corporate video' },
+  { src: v1 as string, alt: 'Video of an intern', poster: 'https://placehold.co/600x400/000000/ffffff?text=Video+1' },
+  { src: v2 as string, alt: 'Video of a workshop', poster: 'https://placehold.co/600x400/000000/ffffff?text=Video+2' },
+  { src: v3 as string, alt: 'Corporate video', poster: 'https://placehold.co/600x400/000000/ffffff?text=Video+3' },
 ];
 
 const GallerySection: React.FC = () => {
@@ -27,6 +30,7 @@ const GallerySection: React.FC = () => {
   );
 
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = React.useState<string | null>(null);
 
   return (
     <div className="my-12">
@@ -71,18 +75,33 @@ const GallerySection: React.FC = () => {
         {/* Videos Section */}
         <Card className="overflow-hidden">
           <CardContent className="p-0">
-            <Carousel plugins={[plugin.current]} onMouseEnter={plugin.current.stop} onMouseLeave={plugin.current.reset}>
-              <CarouselContent>
-                {videos.map((video, index) => (
-                  <CarouselItem key={index} className="relative">
-                    <img src={video.src} alt={video.alt} className="w-full h-70 object-cover" />
-                    <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                      <PlayCircle className="h-16 w-16 text-white opacity-80" />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+            <Dialog>
+              <Carousel plugins={[plugin.current]} onMouseEnter={plugin.current.stop} onMouseLeave={plugin.current.reset}>
+                <CarouselContent>
+                  {videos.map((video, index) => (
+                    <CarouselItem key={index} className="relative">
+                      <DialogTrigger asChild onClick={() => setSelectedVideo(video.src)}>
+                        <div className="relative cursor-pointer">
+                          {video.poster ? (
+                            <img src={video.poster} alt={video.alt} className="w-full h-70 object-cover" />
+                          ) : (
+                            <div className="w-full h-70 bg-black" aria-label={video.alt} />
+                          )}
+                          <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                            <PlayCircle className="h-16 w-16 text-white opacity-80" />
+                          </div>
+                        </div>
+                      </DialogTrigger>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <DialogContent className="sm:max-w-[800px]">
+                  {selectedVideo && (
+                    <video src={selectedVideo} controls autoPlay className="w-full h-auto rounded-md" />
+                  )}
+                </DialogContent>
+              </Carousel>
+            </Dialog>
           </CardContent>
           <CardFooter className="bg-gray-50 p-4 flex justify-between items-center">
             <div className="flex items-center gap-2 text-orange-600 font-semibold">
