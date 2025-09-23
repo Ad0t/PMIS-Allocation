@@ -15,12 +15,12 @@ interface InternshipsPageProps {
 }
 
 interface Internship {
-  internship_id: number;
+  internship_id: string;
   internship_title: string;
   company_name: string;
   location: string;
   capacity: number;
-  status: "active" | "closed";
+  status: "Open" | "Closed";
   category: string;
 }
 
@@ -28,11 +28,11 @@ export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, curre
   const [internships, setInternships] = useState<Internship[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"all" | "active" | "closed">("all");
+  const [filterStatus, setFilterStatus] = useState<"all" | "Open" | "Closed">("all");
   const [filterCategory, setFilterCategory] = useState<string>("all");
 
   useEffect(() => {
-    apiJson<Internship[]>("/api/data/internship")
+    apiJson<Internship[]>("/api/internship")
       .then((data) => {
         setInternships(data);
         const uniqueCategories = Array.from(new Set(data.map(internship => internship.category)));
@@ -102,15 +102,15 @@ return (
               All
             </Button>
             <Button
-              variant={filterStatus === "active" ? "success" : "outline"}
-              onClick={() => setFilterStatus("active")}
+              variant={filterStatus === "Open" ? "success" : "outline"}
+              onClick={() => setFilterStatus("Open")}
               size="sm"
             >
-              Active
+              Open
             </Button>
             <Button
-              variant={filterStatus === "closed" ? "warning" : "outline"}
-              onClick={() => setFilterStatus("closed")}
+              variant={filterStatus === "Closed" ? "warning" : "outline"}
+              onClick={() => setFilterStatus("Closed")}
               size="sm"
             >
               Closed

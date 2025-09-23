@@ -17,7 +17,7 @@ interface InternshipDetailPageProps {
 }
 
 interface Internship {
-    internship_id: number;
+    internship_id: string;
     internship_title: string;
     company_name: string;
     location: string;
@@ -30,11 +30,11 @@ interface Internship {
 }
 
 interface Candidate {
-    id: number;
+    candidate_id: string;
     name: string;
-    education: string;
-    skills: string[];
-    location: string;
+    candidate_degree: string;
+    technical_skills: string;
+    location_preference_1: string;
     projects: string;
     status: 'shortlisted' | 'promising' | 'not-recommended';
     ranking: number;
@@ -202,13 +202,13 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                   </TableHeader>
                   <TableBody>
                     {candidates.map((candidate) => (
-                      <TableRow key={candidate.id}>
-                        <TableCell>{candidate.id}</TableCell>
+                      <TableRow key={candidate.candidate_id}>
+                        <TableCell>{candidate.candidate_id}</TableCell>
                         <TableCell className="font-medium">{candidate.name}</TableCell>
-                        <TableCell>{candidate.education}</TableCell>
+                        <TableCell>{candidate.candidate_degree}</TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
-                            {candidate.skills.map((skill) => (
+                            {candidate.technical_skills.map((skill) => (
                               <Badge key={skill} variant="outline" className="text-xs">
                                 {skill}
                               </Badge>
@@ -266,13 +266,13 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                   </TableHeader>
                   <TableBody>
                     {candidates.map((candidate) => (
-                      <TableRow key={candidate.id}>
-                        <TableCell>{candidate.id}</TableCell>
+                      <TableRow key={candidate.candidate_id}>
+                        <TableCell>{candidate.candidate_id}</TableCell>
                         <TableCell className="font-medium">{candidate.name}</TableCell>
-                        <TableCell>{candidate.education}</TableCell>
+                        <TableCell>{candidate.candidate_degree}</TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
-                            {candidate.skills.map((skill) => (
+                            {candidate.technical_skills.map((skill) => (
                               <Badge key={skill} variant="outline" className="text-xs">
                                 {skill}
                               </Badge>

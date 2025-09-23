@@ -11,7 +11,7 @@ interface InternshipTileProps {
   location: string;
   capacity: number;
   // applicants: number;
-  status: "active" | "closed";
+  status: "Open" | "Closed";
   onClick?: (id: string) => void;
 }
 
@@ -22,11 +22,10 @@ export function InternshipTile({
   companyLogo,
   location,
   capacity,
-  // applicants,
   status,
   onClick
 }: InternshipTileProps) {
-  const isActive = status === "active";
+  const isActive = status === "Open";
   
   return (
     <Card 
@@ -60,7 +59,7 @@ export function InternshipTile({
               isActive ? "bg-success text-success-foreground" : "bg-warning text-warning-foreground"
             )}
           >
-            {isActive ? "Active" : "Closed"}
+            {isActive ? "Open" : "Closed"}
           </Badge>
         </div>
       </CardHeader>
