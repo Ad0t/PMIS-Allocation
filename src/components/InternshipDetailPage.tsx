@@ -17,24 +17,24 @@ interface InternshipDetailPageProps {
 }
 
 interface Internship {
-    id: number;
-    job_title: string;
+    internship_id: string;
+    internship_title: string;
     company_name: string;
     location: string;
     status: string;
-    stipend: string;
-    duration_hours: number;
+    stipend_inr_month: string;
+    duration_months: number;
     job_description: string;
-    job_skill_set: string[];
-    job_responsibilities: string[];
+    skills_required: string[];
+    responsibilities: string[];
 }
 
 interface Candidate {
-    id: number;
+    candidate_id: string;
     name: string;
-    education: string;
-    skills: string[];
-    location: string;
+    candidate_degree: string;
+    technical_skills: string;
+    location_preference_1: string;
     projects: string;
     status: 'shortlisted' | 'promising' | 'not-recommended';
     ranking: number;
@@ -123,7 +123,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">{internship.job_title}</h1>
+            <h1 className="text-3xl font-bold text-foreground">{internship.internship_title}</h1>
             <p className="text-lg text-muted-foreground">{internship.company_name}</p>
           </div>
         </div>
@@ -136,11 +136,11 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
           </div>
           <div className="flex items-center gap-2">
             <IndianRupee className="h-4 w-4" />
-            {internship.stipend}
+            {internship.stipend_inr_month}
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            {internship.duration_hours} Months
+            {internship.duration_months} Months
           </div>
         </div>
 
@@ -159,7 +159,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                 
                 <h3 className="text-lg font-semibold mb-3">Skills Required</h3>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {internship.job_skill_set.map((skill) => (
+                  {internship.skills_required.map((skill) => (
                     <Badge key={skill} variant="outline">{skill}</Badge>
                   ))}
                 </div>
@@ -168,7 +168,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <h3 className="text-lg font-semibold mb-3">Responsibilities</h3>
                 <ul className="space-y-2">
-                  {internship.job_responsibilities.map((responsibility, index) => (
+                  {internship.responsibilities.map((responsibility, index) => (
                     <li key={index} className="flex items-start gap-2 text-muted-foreground">
                       <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                       {responsibility}
@@ -202,13 +202,13 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                   </TableHeader>
                   <TableBody>
                     {candidates.map((candidate) => (
-                      <TableRow key={candidate.id}>
-                        <TableCell>{candidate.id}</TableCell>
+                      <TableRow key={candidate.candidate_id}>
+                        <TableCell>{candidate.candidate_id}</TableCell>
                         <TableCell className="font-medium">{candidate.name}</TableCell>
-                        <TableCell>{candidate.education}</TableCell>
+                        <TableCell>{candidate.candidate_degree}</TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
-                            {candidate.skills.map((skill) => (
+                            {candidate.technical_skills.split(',').map((skill) => (
                               <Badge key={skill} variant="outline" className="text-xs">
                                 {skill}
                               </Badge>
@@ -266,13 +266,13 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                   </TableHeader>
                   <TableBody>
                     {candidates.map((candidate) => (
-                      <TableRow key={candidate.id}>
-                        <TableCell>{candidate.id}</TableCell>
+                      <TableRow key={candidate.candidate_id}>
+                        <TableCell>{candidate.candidate_id}</TableCell>
                         <TableCell className="font-medium">{candidate.name}</TableCell>
-                        <TableCell>{candidate.education}</TableCell>
+                        <TableCell>{candidate.candidate_degree}</TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
-                            {candidate.skills.map((skill) => (
+                            {candidate.technical_skills.split(',').map((skill) => (
                               <Badge key={skill} variant="outline" className="text-xs">
                                 {skill}
                               </Badge>

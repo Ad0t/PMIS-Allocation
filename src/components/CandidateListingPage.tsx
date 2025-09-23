@@ -15,6 +15,14 @@ interface CandidateListingPageProps {
   onLogout: () => void;
 }
 
+interface Candidate {
+  candidate_id: string;
+  name: string;
+  candidate_degree: string;
+  technical_skills: string;
+  location_preference_1: string;
+  projects: string;
+}
 export function CandidateListingPage({ internshipId, onBack, onLogout }: CandidateListingPageProps) {
   const [candidates, setCandidates] = useState([]);
   const [internshipInfo, setInternshipInfo] = useState(null);

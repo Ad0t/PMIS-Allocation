@@ -4,29 +4,28 @@ import { MapPin, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface InternshipTileProps {
-  id: string;
-  job_title: string;
+  internship_id: string;
+  internship_title: string;
   company_name: string;
   companyLogo?: string;
   location: string;
-  job_capacity: number;
+  capacity: number;
   // applicants: number;
-  status: "active" | "closed";
+  status: "Open" | "Closed";
   onClick?: (id: string) => void;
 }
 
 export function InternshipTile({
-  id,
-  job_title,
+  internship_id,
+  internship_title,
   company_name,
   companyLogo,
   location,
-  job_capacity,
-  // applicants,
+  capacity,
   status,
   onClick
 }: InternshipTileProps) {
-  const isActive = status === "active";
+  const isActive = status === "Open";
   
   return (
     <Card 
@@ -36,7 +35,7 @@ export function InternshipTile({
           ? "border-success hover:border-success/80 bg-success-light/10" 
           : "border-warning hover:border-warning/80 bg-warning-light/10 opacity-75"
       )}
-      onClick={() => onClick?.(id)}
+      onClick={() => onClick?.(internship_id)}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
@@ -49,7 +48,7 @@ export function InternshipTile({
               </div>
             )}
             <div>
-              <h3 className="font-semibold text-lg leading-tight">{job_title}</h3>
+              <h3 className="font-semibold text-lg leading-tight">{internship_title}</h3>
               <p className="text-sm text-muted-foreground">{company_name}</p>
             </div>
           </div>
@@ -60,7 +59,7 @@ export function InternshipTile({
               isActive ? "bg-success text-success-foreground" : "bg-warning text-warning-foreground"
             )}
           >
-            {isActive ? "Active" : "Closed"}
+            {isActive ? "Open" : "Closed"}
           </Badge>
         </div>
       </CardHeader>
@@ -73,7 +72,7 @@ export function InternshipTile({
           </div>
           <div className="flex items-center space-x-1">
             <Users className="h-4 w-4" />
-            <span>{job_capacity} applicants</span>
+            <span>{capacity} applicants</span>
           </div>
         </div>
       </CardContent>
