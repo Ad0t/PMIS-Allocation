@@ -107,7 +107,8 @@
 
 @layer base {
   * {
-    @apply border;
+    /* Only set the default border color token; do not draw borders */
+    @apply border-border;
   }
 
   body {

@@ -60,7 +60,7 @@ export function GovHeader({ currentUser = "Admin User", onLogout, onNavigate, cu
                 className={currentPage === "candidates" ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"}
                 onClick={() => onNavigate?.("candidates")}
               >
-                Candidates
+                Contact Us
               </Button>
             </div>
           </div>

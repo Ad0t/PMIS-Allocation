@@ -1,11 +1,9 @@
-import { useState, useEffect } from "react";
-import { apiJson } from "@/lib/api";
+import { useState } from "react";
 import { GovHeader } from "./GovHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Filter, Eye } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Mail, Phone, MapPin, Send } from "lucide-react";
 
 
 interface CandidatesPageProps {
@@ -15,23 +13,17 @@ interface CandidatesPageProps {
 }
 
 export function CandidatesPage({ onLogout, onNavigate, currentPage }: CandidatesPageProps) {
-  const [candidates, setCandidates] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
-    apiJson<any[]>("/api/candidates") // eslint-disable-line @typescript-eslint/no-explicit-any
-      .then(data => setCandidates(data))
-      .catch(error => console.error('Error fetching candidates:', error));
-  }, []);
-  const filteredCandidates = candidates.filter(candidate => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      candidate.name.toLowerCase().includes(searchLower) ||
-      candidate.education.toLowerCase().includes(searchLower) ||
-      candidate.skills.some(skill => skill.toLowerCase().includes(searchLower)) ||
-      candidate.location.toLowerCase().includes(searchLower)
-    );
-  });
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+    // Hook up to backend/email service here if needed
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -39,94 +31,76 @@ export function CandidatesPage({ onLogout, onNavigate, currentPage }: Candidates
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Candidates Database</h1>
-          <p className="text-muted-foreground">Search and manage all registered candidates</p>
+          <h1 className="text-3xl font-bold text-foreground">Contact Us</h1>
+          <p className="text-muted-foreground">We’re here to help. Reach out anytime.</p>
         </div>
 
-        {/* Search Bar */}
-        <div className="bg-card p-6 rounded-lg border shadow-sm mb-8">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by name, skills, education, or location..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-card p-6 rounded-lg border shadow-sm">
+            {submitted ? (
+              <div className="text-center py-12">
+                <h3 className="text-2xl font-semibold mb-2">Thanks for reaching out!</h3>
+                <p className="text-muted-foreground">We have received your message and will get back to you soon.</p>
+                <Button className="mt-6" onClick={() => { setSubmitted(false); setName(""); setEmail(""); setSubject(""); setMessage(""); }}>Send another message</Button>
+              </div>
+            ) : (
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Full Name</label>
+                    <Input required value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Email</label>
+                    <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Subject</label>
+                  <Input required value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="How can we help?" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Message</label>
+                  <Textarea required value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Write your message here..." rows={6} />
+                </div>
+                <Button type="submit" className="inline-flex items-center">
+                  <Send className="h-4 w-4 mr-2" />
+                  Send Message
+                </Button>
+              </form>
+            )}
           </div>
-        </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-card p-6 rounded-lg border shadow-sm">
-            <h3 className="text-2xl font-bold text-primary">{candidates.length}</h3>
-            <p className="text-sm text-muted-foreground">Total Candidates</p>
-          </div>
-          <div className="bg-card p-6 rounded-lg border shadow-sm">
-            <h3 className="text-2xl font-bold text-success">
-              {candidates.reduce((sum, c) => sum + c.applications, 0)}
-            </h3>
-            <p className="text-sm text-muted-foreground">Total Applications</p>
-          </div>
-          <div className="bg-card p-6 rounded-lg border shadow-sm">
-            <h3 className="text-2xl font-bold text-secondary">
-              {new Set(candidates.map(c => c.location)).size}
-            </h3>
-            <p className="text-sm text-muted-foreground">Cities Represented</p>
-          </div>
-        </div>
-
-        {/* Candidates Table */}
-        <div className="bg-card rounded-lg border shadow-sm">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Candidate Name</TableHead>
-                <TableHead>Education</TableHead>
-                <TableHead>Key Skills</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Applications</TableHead>
-                {/* <TableHead>Actions</TableHead> */}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredCandidates.map((candidate) => (
-                <TableRow key={candidate.id}>
-                  <TableCell className="font-medium">{candidate.name}</TableCell>
-                  <TableCell>{candidate.education}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {candidate.skills.slice(0, 3).map((skill, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {skill}
-                        </Badge>
-                      ))}
-                      {candidate.skills.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{candidate.skills.length - 3} more
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>{candidate.location}</TableCell>
-                  <TableCell>{candidate.applications} applications</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        {filteredCandidates.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-muted-foreground mb-4">
-              <Filter className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No candidates found matching your search criteria.</p>
+          <div className="bg-card p-6 rounded-lg border shadow-sm space-y-6">
+            <div>
+              <h3 className="text-xl font-semibold mb-2">Contact Information</h3>
+              <p className="text-sm text-muted-foreground">Get in touch with the PM Internship Scheme team.</p>
             </div>
-            <Button variant="outline" onClick={() => setSearchTerm("")}>
-              Clear Search
-            </Button>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Mail className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="font-medium">Email</p>
+                  <p className="text-sm text-muted-foreground">support@pmis.gov.in</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Phone className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="font-medium">Phone</p>
+                  <p className="text-sm text-muted-foreground">+91 11 1234 5678</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="font-medium">Address</p>
+                  <p className="text-sm text-muted-foreground">Ministry of Corporate Affairs, New Delhi, India</p>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
       </main>
     </div>
   );
