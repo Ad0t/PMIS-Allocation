@@ -17,16 +17,16 @@ interface InternshipDetailPageProps {
 }
 
 interface Internship {
-    id: number;
-    job_title: string;
+    internship_id: number;
+    internship_title: string;
     company_name: string;
     location: string;
     status: string;
-    stipend: string;
-    duration_hours: number;
+    stipend_inr_month: string;
+    duration_months: number;
     job_description: string;
-    job_skill_set: string[];
-    job_responsibilities: string[];
+    skills_required: string[];
+    responsibilities: string[];
 }
 
 interface Candidate {
@@ -53,8 +53,8 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
   useEffect(() => {
     setLoading(true);
     Promise.all([
-      apiJson<Internship>(`/api/internships/${internshipId}`),
-      apiJson<Candidate[]>(`/api/internships/${internshipId}/candidates`)
+      apiJson<Internship>(`/api/internship/${internshipId}`),
+      apiJson<Candidate[]>(`/api/internship/${internshipId}/candidates`)
     ])
       .then(([internshipData, candidateData]) => {
         setInternship(internshipData);
@@ -123,7 +123,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">{internship.job_title}</h1>
+            <h1 className="text-3xl font-bold text-foreground">{internship.internship_title}</h1>
             <p className="text-lg text-muted-foreground">{internship.company_name}</p>
           </div>
         </div>
@@ -136,11 +136,11 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
           </div>
           <div className="flex items-center gap-2">
             <IndianRupee className="h-4 w-4" />
-            {internship.stipend}
+            {internship.stipend_inr_month}
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            {internship.duration_hours} Months
+            {internship.duration_months} Months
           </div>
         </div>
 
@@ -159,7 +159,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                 
                 <h3 className="text-lg font-semibold mb-3">Skills Required</h3>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {internship.job_skill_set.map((skill) => (
+                  {internship.skills_required.map((skill) => (
                     <Badge key={skill} variant="outline">{skill}</Badge>
                   ))}
                 </div>
@@ -168,7 +168,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <h3 className="text-lg font-semibold mb-3">Responsibilities</h3>
                 <ul className="space-y-2">
-                  {internship.job_responsibilities.map((responsibility, index) => (
+                  {internship.responsibilities.map((responsibility, index) => (
                     <li key={index} className="flex items-start gap-2 text-muted-foreground">
                       <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                       {responsibility}

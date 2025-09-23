@@ -97,7 +97,7 @@ def get_table_data(table_name):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/internships')
+@app.route('/api/internship')
 def get_internships():
     guard = supabase_required()
     if guard:
@@ -105,7 +105,7 @@ def get_internships():
             return jsonify([])
         return guard
     try:
-        response = supabase.table('internships').select("*").execute()  # type: ignore[union-attr]
+        response = supabase.table('internship').select("*").execute()  # type: ignore[union-attr]
         transformed = []
         for internship in response.data:
             new_item = {}
@@ -123,7 +123,7 @@ def get_internships():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/internships/<int:internship_id>')
+@app.route('/api/internship/<int:internship_id>')
 def get_internship(internship_id):
     guard = supabase_required()
     if guard:

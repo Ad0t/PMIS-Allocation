@@ -22,7 +22,6 @@ export function CandidatesPage({ onLogout, onNavigate, currentPage }: Candidates
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    // Hook up to backend/email service here if needed
   };
 
   return (

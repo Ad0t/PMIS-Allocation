@@ -15,11 +15,11 @@ interface InternshipsPageProps {
 }
 
 interface Internship {
-  id: number;
-  job_title: string;
+  internship_id: number;
+  internship_title: string;
   company_name: string;
   location: string;
-  job_capacity: number;
+  capacity: number;
   status: "active" | "closed";
   category: string;
 }
@@ -32,7 +32,7 @@ export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, curre
   const [filterCategory, setFilterCategory] = useState<string>("all");
 
   useEffect(() => {
-    apiJson<Internship[]>("/api/internships")
+    apiJson<Internship[]>("/api/data/internship")
       .then((data) => {
         setInternships(data);
         const uniqueCategories = Array.from(new Set(data.map(internship => internship.category)));
@@ -43,7 +43,7 @@ export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, curre
 
   const filteredInternships = internships.filter(internship => {
   const matchesSearch =
-    internship.job_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    internship.internship_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     internship.company_name.toLowerCase().includes(searchTerm.toLowerCase());
   const matchesStatus = filterStatus === "all" || internship.status.toLowerCase() === filterStatus;
   const matchesCategory = filterCategory === "all" || internship.category.toLowerCase() === filterCategory.toLowerCase();
@@ -127,12 +127,12 @@ return (
             //   onClick={onInternshipClick}
             // />
             <InternshipTile
-              key={internship.id}
-              id={internship.id.toString()}
-              job_title={internship.job_title}
+              key={internship.internship_id}
+              internship_id={internship.internship_id.toString()}
+              internship_title={internship.internship_title}
               company_name={internship.company_name}
               location={internship.location}
-              job_capacity={internship.job_capacity}
+              capacity={internship.capacity}
               status={internship.status}
               onClick={onInternshipClick}
             />
