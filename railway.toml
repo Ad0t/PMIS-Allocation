@@ -1,0 +1,15 @@
+# Railway configuration for combined build (frontend + backend)
+
+[build]
+# Single script handles install + build + start readiness
+commands = [
+  "chmod +x railway_start.sh || echo 'chmod not supported on this FS'"
+]
+
+[deploy]
+# Run unified startup script
+startCommand = "bash railway_start.sh"
+
+[env]
+# Set the frontend build directory if different from default 'dist'
+FRONTEND_BUILD_DIR = "dist"

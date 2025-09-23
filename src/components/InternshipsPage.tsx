@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiJson } from "@/lib/api";
 import { GovHeader } from "./GovHeader";
 import { InternshipTile } from "./InternshipTile";
 import { Button } from "@/components/ui/button";
@@ -31,11 +32,8 @@ export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, curre
   const [filterCategory, setFilterCategory] = useState<string>("all");
 
   useEffect(() => {
-    // const apiUrl = import.meta.env.VITE_API_URL;
-    const apiUrl = `http://127.0.0.1:5000/`;
-    fetch(`${apiUrl}/api/internships`)
-      .then(response => response.json())
-      .then((data: Internship[]) => {
+    apiJson<Internship[]>("/api/internships")
+      .then((data) => {
         setInternships(data);
         const uniqueCategories = Array.from(new Set(data.map(internship => internship.category)));
         setCategories(uniqueCategories);

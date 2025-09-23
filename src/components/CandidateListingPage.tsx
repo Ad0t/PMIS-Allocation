@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiJson } from "@/lib/api";
 import { GovHeader } from "./GovHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,19 +26,14 @@ export function CandidateListingPage({ internshipId, onBack, onLogout }: Candida
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const apiUrl = import.meta.env.VITE_API_URL;
-        const apiUrl = `http://127.0.0.1:5000/`;
-      
-        const internshipResponse = await fetch(`${apiUrl}/api/internships/${internshipId}`);
-        const internshipData = await internshipResponse.json();
-
-        const candidatesResponse = await fetch(`${apiUrl}/api/internships/${internshipId}/candidates`);
-        const candidatesData = await candidatesResponse.json();
-      
+        const [internshipData, candidatesData] = await Promise.all([
+          apiJson<any>(`/api/internships/${internshipId}`), // eslint-disable-line @typescript-eslint/no-explicit-any
+          apiJson<any[]>(`/api/internships/${internshipId}/candidates`) // eslint-disable-line @typescript-eslint/no-explicit-any
+        ]);
         setInternshipInfo(internshipData);
         setCandidates(candidatesData);
-      } catch (err) {
-        setError(err.message);
+      } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+        setError(err.message || 'Error fetching data');
       } finally {
         setLoading(false);
       }

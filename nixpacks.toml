@@ -1,0 +1,19 @@
+[phases.setup]
+# Explicitly request both Node and Python toolchains
+nixPkgs = ["python312", "nodejs_20"]
+
+[phases.install]
+# Install Python deps
+cmds = [
+  "python3 -m pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir -r requirements.txt",
+  "npm ci || npm install"
+]
+
+[phases.build]
+cmds = [
+  "npm run build"
+]
+
+[start]
+# Unified start (script handles environment)
+cmd = "bash railway_start.sh"
