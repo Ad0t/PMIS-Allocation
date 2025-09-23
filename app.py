@@ -113,7 +113,7 @@ def get_internships():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/internship/<int:internship_id>')
+@app.route('/api/internships/<internship_id>')
 def get_internship(internship_id):
     guard = supabase_required()
     if guard:
@@ -121,7 +121,7 @@ def get_internship(internship_id):
             return jsonify({"error": "Not available"}), 404
         return guard
     try:
-        response = supabase.table('internships').select("*").eq('id', internship_id).execute()  # type: ignore[union-attr]
+        response = supabase.table('internship').select("*").eq('id', internship_id).execute()  # type: ignore[union-attr]
         data = response.data or []
         if not data:
             return jsonify({"error": "Not found"}), 404
@@ -159,17 +159,15 @@ def get_candidates_database():
     if guard:
         return guard
     try:
-        response = supabase.table('candidates').select("id, name, education, skills, projects").execute()  # type: ignore[union-attr]
+        response = supabase.table('candidates_tr').select("id, name, education, skills, projects").execute()  # type: ignore[union-attr]
         return jsonify(response.data)
     except Exception as e:  # noqa: BLE001
         logger.exception("Error fetching candidates from db")
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/internships/<int:internship_id>/candidates')
+@app.route('/api/internship/<internship_id>/candidates')
 def get_candidates_for_internship(internship_id):
-    # filtered = [c for c in candidates_data if internship_id in c.get("internship_ids", [])]
-    # return jsonify(filtered)
     return get_candidates()
 
 

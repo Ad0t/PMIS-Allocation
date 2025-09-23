@@ -53,8 +53,8 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
   useEffect(() => {
     setLoading(true);
     Promise.all([
-      apiJson<Internship>(`/api/internship/${internshipId}`),
-      apiJson<Candidate[]>(`/api/internship/${internshipId}/candidates`)
+      apiJson<Internship>(`/api/internships/${internshipId}`),
+      apiJson<Candidate[]>(`/api/internships/${internshipId}/candidates`)
     ])
       .then(([internshipData, candidateData]) => {
         setInternship(internshipData);
@@ -208,7 +208,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                         <TableCell>{candidate.candidate_degree}</TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
-                            {candidate.technical_skills.map((skill) => (
+                            {candidate.technical_skills.split(',').map((skill) => (
                               <Badge key={skill} variant="outline" className="text-xs">
                                 {skill}
                               </Badge>
@@ -272,7 +272,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                         <TableCell>{candidate.candidate_degree}</TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
-                            {candidate.technical_skills.map((skill) => (
+                            {candidate.technical_skills.split(',').map((skill) => (
                               <Badge key={skill} variant="outline" className="text-xs">
                                 {skill}
                               </Badge>
