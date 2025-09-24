@@ -43,10 +43,10 @@ export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, curre
 
   const filteredInternships = internships.filter(internship => {
   const matchesSearch =
-    internship.internship_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    internship.company_name.toLowerCase().includes(searchTerm.toLowerCase());
-  const matchesStatus = filterStatus === "all" || internship.status.toLowerCase() === filterStatus;
-  const matchesCategory = filterCategory === "all" || internship.category.toLowerCase() === filterCategory.toLowerCase();
+    internship.internship_title.includes(searchTerm) ||
+    internship.company_name.includes(searchTerm);
+  const matchesStatus = filterStatus === "all" || internship.status === filterStatus;
+  const matchesCategory = filterCategory === "all" || internship.category === filterCategory;
 
   return matchesSearch && matchesStatus && matchesCategory;
 });
@@ -72,7 +72,7 @@ return (
           {categories.map((category) => (
             <Button
               key={category}
-              variant={filterCategory.toLowerCase() === category ? "government" : "outline"}
+              variant={filterCategory === category ? "government" : "outline"}
               onClick={() => setFilterCategory(category)}
               size="sm"
               className="capitalize"

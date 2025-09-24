@@ -87,7 +87,7 @@ def get_table_data(table_name):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/internship')
+@app.route('/api/internships')
 def get_internships():
     guard = supabase_required()
     if guard:
@@ -96,18 +96,7 @@ def get_internships():
         return guard
     try:
         response = supabase.table('internship').select("*").execute()  # type: ignore[union-attr]
-        transformed = []
-        for internship in response.data:
-            new_item = {}
-            for k, v in internship.items():
-                if isinstance(v, str):
-                    new_item[k] = capitalize_words(v)
-                elif isinstance(v, list):
-                    new_item[k] = [capitalize_words(i) if isinstance(i, str) else i for i in v]
-                else:
-                    new_item[k] = v
-            transformed.append(new_item)
-        return jsonify(transformed)
+        return jsonify(response.data)
     except Exception as e:  # noqa: BLE001
         logger.exception("Error fetching internships")
         return jsonify({"error": str(e)}), 500
@@ -121,21 +110,13 @@ def get_internship(internship_id):
             return jsonify({"error": "Not available"}), 404
         return guard
     try:
-        response = supabase.table('internship').select("*").eq('id', internship_id).execute()  # type: ignore[union-attr]
+        response = supabase.table('internship').select("*").eq('internship_id', internship_id).execute()
         data = response.data or []
         if not data:
             return jsonify({"error": "Not found"}), 404
         internship = data[0]
-        transformed = {}
-        for k, v in internship.items():
-            if isinstance(v, str):
-                transformed[k] = capitalize_words(v)
-            elif isinstance(v, list):
-                transformed[k] = [capitalize_words(i) if isinstance(i, str) else i for i in v]
-            else:
-                transformed[k] = v
-        return jsonify(transformed)
-    except Exception as e:  # noqa: BLE001
+        return jsonify(internship)
+    except Exception as e:
         logger.exception("Error fetching internship detail")
         return jsonify({"error": str(e)}), 500
 
@@ -166,9 +147,18 @@ def get_candidates_database():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/internship/<internship_id>/candidates')
+@app.route('/api/internships/<internship_id>/candidates')
 def get_candidates_for_internship(internship_id):
-    return get_candidates()
+    guard = supabase_required()
+    if guard:
+        return guard
+    try:
+        # This is the corrected query to filter candidates by the internship_id
+        response = supabase.table('candidates_tr').select("*").eq('internship_id', internship_id).execute()
+        return jsonify(response.data)
+    except Exception as e:
+        logger.exception(f"Error fetching candidates for internship {internship_id}")
+        return jsonify({"error": str(e)}), 500
 
 
 
