@@ -54,6 +54,28 @@ def health():
         "environment": os.getenv("APP_ENV", "production")
     })
 
+@app.route('/api/login', methods=['POST'])
+def login():
+    guard = supabase_required()
+    if guard:
+        return guard
+
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+
+    try:
+        response = supabase.table('login_creds').select("*").eq('username', username).eq('password', password).execute()
+        if response.data:
+            return jsonify({"success": True, "message": "Login successful"})
+        else:
+            return jsonify({"success": False, "message": "Invalid credentials"}), 401
+    except Exception as e:
+        logger.exception("Error during login")
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/')
 def root():
