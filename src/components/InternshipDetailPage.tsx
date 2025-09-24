@@ -28,36 +28,41 @@ interface Internship {
     responsibilities: string[];
 }
 
-interface Candidate {
-    candidate_id: string;
-    name: string;
-    candidate_degree: string;
-    technical_skills: string;
-    location_preference_1: string;
-    projects: string;
-    status: 'shortlisted' | 'promising' | 'not-recommended';
-    ranking: number;
-}
+// interface Candidate {
+//     candidate_id: string;
+//     name: string;
+//     candidate_degree: string;
+//     technical_skills: string;
+//     location_preference_1: string;
+//     projects: string;
+//     status: 'shortlisted' | 'promising' | 'not-recommended';
+//     ranking: number;
+// }
 
 export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigate }: InternshipDetailPageProps) {
   const [internship, setInternship] = useState<Internship | null>(null);
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  // const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [aiProgress, setAiProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [loading, setLoading] = useState(true);
 
-
+  const candidates: any[] = []; 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      apiJson<Internship>(`/api/internships/${internshipId}`),
-      apiJson<Candidate[]>(`/api/internships/${internshipId}/candidates`)
-    ])
-      .then(([internshipData, candidateData]) => {
+    // Promise.all([
+    //   apiJson<Internship>(`/api/internships/${internshipId}`),
+    //   // apiJson<Candidate[]>(`/api/internships/${internshipId}/candidates`)
+    // ])
+    apiJson<Internship>(`/api/internships/${internshipId}`)
+      // .then(([internshipData]) => {
+      // // .then(([internshipData, candidateData]) => {
+      //   setInternship(internshipData);
+      //   // setCandidates(candidateData);
+      // })
+      .then((internshipData) => {
         setInternship(internshipData);
-        setCandidates(candidateData);
       })
       .catch(error => console.error('Error fetching data:', error))
       .finally(() => setLoading(false));
@@ -147,7 +152,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 max-w-md">
             <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="applicants">Applicants</TabsTrigger>
+            <TabsTrigger value="applicants">Candidates</TabsTrigger>
           </TabsList>
 
           <TabsContent value="description" className="mt-8">
@@ -157,22 +162,52 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                 <p className="text-muted-foreground mb-6">{internship.job_description}</p>
                 
                 <h3 className="text-lg font-semibold mb-3">Skills Required</h3>
-                <div className="flex flex-wrap gap-2 mb-6">
+                {/* <div className="flex flex-wrap gap-2 mb-6">
                   {internship.skills_required.map((skill) => (
                     <Badge key={skill} variant="outline">{skill}</Badge>
                   ))}
+                </div> */}
+                {/* <div className="flex flex-wrap gap-2 mb-6">
+                  {internship.skills_required &&
+                    (Array.isArray(internship.skills_required)
+                      ? internship.skills_required
+                      : String(internship.skills_required).split(',')
+                    ).map((skill) => (
+                      <Badge key={skill.trim()} variant="outline">{skill.trim()}</Badge>
+                  ))}
+                </div> */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {internship.skills_required &&
+                    String(internship.skills_required)
+                      .split(',')
+                      .map((skill) => (
+                        <Badge key={skill.trim()} variant="outline">
+                          {skill.trim()}
+                        </Badge>
+                      ))}
                 </div>
               </div>
 
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <h3 className="text-lg font-semibold mb-3">Responsibilities</h3>
-                <ul className="space-y-2">
+                {/* <ul className="space-y-2">
                   {internship.responsibilities.map((responsibility, index) => (
                     <li key={index} className="flex items-start gap-2 text-muted-foreground">
                       <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                       {responsibility}
                     </li>
                   ))}
+                </ul> */}
+                <ul className="space-y-2">
+                  {internship.responsibilities &&
+                    String(internship.responsibilities)
+                      .split(',')
+                      .map((responsibility, index) => (
+                        <li key={index} className="flex items-start gap-2 text-muted-foreground">
+                          <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                          {responsibility.trim()}
+                        </li>
+                      ))}
                 </ul>
               </div>
             </div>
@@ -185,7 +220,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                   <h2 className="text-xl font-semibold">Candidate Applications</h2>
                   <Button onClick={runAiShortlisting} variant="government" className="gap-2">
                     <Sparkles className="h-4 w-4" />
-                    Run AI Shortlisting
+                    Run Shortlisting
                   </Button>
                 </div>
 
