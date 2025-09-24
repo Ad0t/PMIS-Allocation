@@ -10,9 +10,10 @@ interface CandidatesPageProps {
   onLogout: () => void;
   onNavigate: (page: string) => void;
   currentPage: string;
+  currentUser?: string;
 }
 
-export function CandidatesPage({ onLogout, onNavigate, currentPage }: CandidatesPageProps) {
+export function CandidatesPage({ onLogout, onNavigate, currentPage, currentUser }: CandidatesPageProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -26,7 +27,7 @@ export function CandidatesPage({ onLogout, onNavigate, currentPage }: Candidates
 
   return (
     <div className="min-h-screen bg-background">
-      <GovHeader onLogout={onLogout} onNavigate={onNavigate} currentPage={currentPage} />
+      <GovHeader onLogout={onLogout} onNavigate={onNavigate} currentPage={currentPage} currentUser={currentUser} />
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">

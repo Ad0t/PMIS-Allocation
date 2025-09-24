@@ -12,6 +12,7 @@ interface InternshipsPageProps {
   onInternshipClick: (id: string) => void;
   onNavigate: (page: string) => void;
   currentPage: string;
+  currentUser?: string;
 }
 
 interface Internship {
@@ -24,7 +25,7 @@ interface Internship {
   category: string;
 }
 
-export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, currentPage }: InternshipsPageProps) {
+export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, currentPage, currentUser }: InternshipsPageProps) {
   const [internships, setInternships] = useState<Internship[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,7 +53,7 @@ export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, curre
 });
 return (
     <div className="min-h-screen bg-background">
-      <GovHeader onLogout={onLogout} onNavigate={onNavigate} currentPage={currentPage} />
+      <GovHeader onLogout={onLogout} onNavigate={onNavigate} currentPage={currentPage} currentUser={currentUser} />
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
