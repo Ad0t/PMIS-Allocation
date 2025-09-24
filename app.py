@@ -70,7 +70,7 @@ def login():
     try:
         response = supabase.table('login_creds').select("*").eq('username', username).eq('password', password).execute()
         if response.data:
-            return jsonify({"success": True, "message": "Login successful"})
+            return jsonify({"success": True, "message": "Login successful", "username": username})
         else:
             return jsonify({"success": False, "message": "Invalid credentials"}), 401
     except Exception as e:
@@ -149,7 +149,7 @@ def get_candidates():
     if guard:
         return guard
     try:
-        response = supabase.table('candidates_tr').select("*").execute()  # type: ignore[union-attr]
+        response = supabase.table('candidates_ts').select("*").execute()  # type: ignore[union-attr]
         return jsonify(response.data)
     except Exception as e:  # noqa: BLE001
         logger.exception("Error fetching candidates from db")
@@ -162,7 +162,7 @@ def get_candidates_database():
     if guard:
         return guard
     try:
-        response = supabase.table('candidates_tr').select("id, name, education, skills, projects").execute()  # type: ignore[union-attr]
+        response = supabase.table('candidates_ts').select("id, name, education, skills, projects").execute()  # type: ignore[union-attr]
         return jsonify(response.data)
     except Exception as e:  # noqa: BLE001
         logger.exception("Error fetching candidates from db")
@@ -176,7 +176,7 @@ def get_candidates_for_internship(internship_id):
         return guard
     try:
         # This is the corrected query to filter candidates by the internship_id
-        response = supabase.table('candidates_tr').select("*").eq('internship_id', internship_id).execute()
+        response = supabase.table('candidates_ts').select("*").eq('internship_id', internship_id).execute()
         return jsonify(response.data)
     except Exception as e:
         logger.exception(f"Error fetching candidates for internship {internship_id}")

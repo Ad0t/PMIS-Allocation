@@ -13,6 +13,7 @@ interface InternshipDetailPageProps {
   onBack: () => void;
   onLogout: () => void;
   onNavigate: (page: string) => void;
+  currentUser?: string;
 }
 
 interface Internship {
@@ -28,20 +29,8 @@ interface Internship {
     responsibilities: string[];
 }
 
-// interface Candidate {
-//     candidate_id: string;
-//     name: string;
-//     candidate_degree: string;
-//     technical_skills: string;
-//     location_preference_1: string;
-//     projects: string;
-//     status: 'shortlisted' | 'promising' | 'not-recommended';
-//     ranking: number;
-// }
-
-export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigate }: InternshipDetailPageProps) {
+export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigate, currentUser }: InternshipDetailPageProps) {
   const [internship, setInternship] = useState<Internship | null>(null);
-  // const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [aiProgress, setAiProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -51,16 +40,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
   const candidates: any[] = []; 
   useEffect(() => {
     setLoading(true);
-    // Promise.all([
-    //   apiJson<Internship>(`/api/internships/${internshipId}`),
-    //   // apiJson<Candidate[]>(`/api/internships/${internshipId}/candidates`)
-    // ])
     apiJson<Internship>(`/api/internships/${internshipId}`)
-      // .then(([internshipData]) => {
-      // // .then(([internshipData, candidateData]) => {
-      //   setInternship(internshipData);
-      //   // setCandidates(candidateData);
-      // })
       .then((internshipData) => {
         setInternship(internshipData);
       })
@@ -118,7 +98,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
 
   return (
     <div className="min-h-screen bg-background">
-      <GovHeader onLogout={onLogout} onNavigate={onNavigate} currentPage="internships" />
+      <GovHeader onLogout={onLogout} onNavigate={onNavigate} currentPage="internships" currentUser={currentUser} />
       
       <main className="container mx-auto px-4 py-8">
         {/* Header */}
@@ -162,20 +142,6 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                 <p className="text-muted-foreground mb-6">{internship.job_description}</p>
                 
                 <h3 className="text-lg font-semibold mb-3">Skills Required</h3>
-                {/* <div className="flex flex-wrap gap-2 mb-6">
-                  {internship.skills_required.map((skill) => (
-                    <Badge key={skill} variant="outline">{skill}</Badge>
-                  ))}
-                </div> */}
-                {/* <div className="flex flex-wrap gap-2 mb-6">
-                  {internship.skills_required &&
-                    (Array.isArray(internship.skills_required)
-                      ? internship.skills_required
-                      : String(internship.skills_required).split(',')
-                    ).map((skill) => (
-                      <Badge key={skill.trim()} variant="outline">{skill.trim()}</Badge>
-                  ))}
-                </div> */}
                 <div className="flex flex-wrap gap-2 mb-6">
                   {internship.skills_required &&
                     String(internship.skills_required)
@@ -190,14 +156,6 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
 
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <h3 className="text-lg font-semibold mb-3">Responsibilities</h3>
-                {/* <ul className="space-y-2">
-                  {internship.responsibilities.map((responsibility, index) => (
-                    <li key={index} className="flex items-start gap-2 text-muted-foreground">
-                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                      {responsibility}
-                    </li>
-                  ))}
-                </ul> */}
                 <ul className="space-y-2">
                   {internship.responsibilities &&
                     String(internship.responsibilities)

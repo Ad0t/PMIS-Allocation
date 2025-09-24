@@ -13,6 +13,7 @@ interface CandidateListingPageProps {
   internshipId: string;
   onBack: () => void;
   onLogout: () => void;
+  currentUser?: string;
 }
 
 interface Candidate {
@@ -23,7 +24,7 @@ interface Candidate {
   location_preference_1: string;
   projects: string;
 }
-export function CandidateListingPage({ internshipId, onBack, onLogout }: CandidateListingPageProps) {
+export function CandidateListingPage({ internshipId, onBack, onLogout, currentUser }: CandidateListingPageProps) {
   const [candidates, setCandidates] = useState([]);
   const [internshipInfo, setInternshipInfo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -102,7 +103,7 @@ export function CandidateListingPage({ internshipId, onBack, onLogout }: Candida
 
   return (
     <div className="min-h-screen bg-background">
-      <GovHeader onLogout={onLogout} />
+      <GovHeader onLogout={onLogout} currentUser={currentUser}/>
       
       <main className="container mx-auto px-4 py-8">
         {/* Header */}

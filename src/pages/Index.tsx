@@ -12,12 +12,7 @@ type AppState = "login" | "dashboard" | "candidates" | "internships" | "internsh
 const Index = () => {
   const [currentState, setCurrentState] = useState<AppState>("login");
   const [selectedInternshipId, setSelectedInternshipId] = useState<string>("");
-
-  // const handleLogin = (username: string, password: string) => {
-  //   // to-do: validate credentials here
-  //   console.log("Login attempt:", { username, password });
-  //   setCurrentState("dashboard");
-  // };
+  const [currentUser, setCurrentUser] = useState<string>("");
 
   const handleLogin = async (username: string, password: string) => {
     try {
@@ -32,6 +27,7 @@ const Index = () => {
       const data = await response.json();
 
       if (data.success) {
+        setCurrentUser(data.username);
         setCurrentState("dashboard");
       } else {
         // Handle failed login, e.g., show an error message
@@ -46,6 +42,7 @@ const Index = () => {
   const handleLogout = () => {
     setCurrentState("login");
     setSelectedInternshipId("");
+    setCurrentUser("");
   };
 
   const handleInternshipClick = (id: string) => {
@@ -81,6 +78,7 @@ const Index = () => {
         internshipId={selectedInternshipId}
         onBack={handleBackToDashboard}
         onLogout={handleLogout}
+        currentUser={currentUser}
       />
     );
   }
@@ -92,6 +90,7 @@ const Index = () => {
         onInternshipClick={handleInternshipClick}
         onNavigate={handleNavigate}
         currentPage="internships"
+        currentUser={currentUser}
       />
     );
   }
@@ -103,6 +102,7 @@ const Index = () => {
         onBack={handleBackToInternships}
         onLogout={handleLogout}
         onNavigate={handleNavigate}
+        currentUser={currentUser}
       />
     );
   }
@@ -113,6 +113,7 @@ const Index = () => {
         onLogout={handleLogout}
         onNavigate={handleNavigate}
         currentPage="candidates"
+        currentUser={currentUser}
       />
     );
   }
@@ -121,6 +122,7 @@ const Index = () => {
     <AdminDashboard
       onLogout={handleLogout}
       onNavigate={handleNavigate}
+      currentUser={currentUser}
     />
   );
 };
