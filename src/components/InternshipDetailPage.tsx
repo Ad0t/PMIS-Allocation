@@ -8,7 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowLeft, MapPin, Calendar, IndianRupee, Sparkles } from "lucide-react";
 
-
 interface InternshipDetailPageProps {
   internshipId: string;
   onBack: () => void;

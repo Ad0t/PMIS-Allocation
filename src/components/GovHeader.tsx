@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { LogOut, User, Moon, Sun, ArrowLeft, ArrowRight } from "lucide-react";
-import mcaLogo from "@/assets/Ministry_of_Corporate_Affairs_India.png";
+import mcaLogo from "@/assets/Emblem_MCA.jpg";
 import pmInternshipLogo from "@/assets/PMIS_Logo.png";
 
 interface GovHeaderProps {
