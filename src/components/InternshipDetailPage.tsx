@@ -70,6 +70,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
           clearInterval(interval);
           setTimeout(() => {
             setShowProgress(false);
+            setShowResults(true);
           }, 1000);
           return 100;
         }
@@ -176,7 +177,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-semibold">Candidate Applications</h2>
-                  <Button onClick={runAiShortlisting} variant="government" className="gap-2">
+                  <Button onClick={runAiShortlisting} variant="government" className="gap-2" disabled={internship.status !== "Closed"}>
                     <Sparkles className="h-4 w-4" />
                     Run Shortlisting
                   </Button>
@@ -228,7 +229,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                   <Progress value={aiProgress} className="mb-4" />
                   <p className="text-sm text-muted-foreground">{aiProgress}% Complete</p>
                   
-                  {aiProgress === 100 && (
+                  {/* {aiProgress === 100 && (
                     <Button 
                       onClick={() => setShowResults(true)} 
                       variant="government" 
@@ -236,7 +237,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                     >
                       Show Results
                     </Button>
-                  )}
+                  )} */}
                 </div>
               </div>
             )}
