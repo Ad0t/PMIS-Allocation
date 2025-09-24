@@ -5,7 +5,7 @@ import { CandidateListingPage } from "@/components/CandidateListingPage";
 import { InternshipDetailPage } from "@/components/InternshipDetailPage";
 import { InternshipsPage } from "@/components/InternshipsPage";
 import { CandidatesPage } from "@/components/CandidatesPage";
-
+import { apiPath } from "@/lib/api"; 
 
 type AppState = "login" | "dashboard" | "candidates" | "internships" | "internship-detail" | "candidates-db" | "companies" | "reports";
 
@@ -13,10 +13,34 @@ const Index = () => {
   const [currentState, setCurrentState] = useState<AppState>("login");
   const [selectedInternshipId, setSelectedInternshipId] = useState<string>("");
 
-  const handleLogin = (username: string, password: string) => {
-    // to-do: validate credentials here
-    console.log("Login attempt:", { username, password });
-    setCurrentState("dashboard");
+  // const handleLogin = (username: string, password: string) => {
+  //   // to-do: validate credentials here
+  //   console.log("Login attempt:", { username, password });
+  //   setCurrentState("dashboard");
+  // };
+
+  const handleLogin = async (username: string, password: string) => {
+    try {
+      const response = await fetch(apiPath('/api/login'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setCurrentState("dashboard");
+      } else {
+        // Handle failed login, e.g., show an error message
+        console.error("Login failed:", data.message);
+        // You can also use a state to display the error to the user
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
   const handleLogout = () => {
