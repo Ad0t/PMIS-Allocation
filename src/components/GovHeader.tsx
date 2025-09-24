@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu, User } from "lucide-react";
+import { LogOut, User, Moon, Sun, ArrowLeft, ArrowRight } from "lucide-react";
 import mcaLogo from "@/assets/Ministry_of_Corporate_Affairs_India.png";
 import pmInternshipLogo from "@/assets/PMIS_Logo.png";
 
@@ -11,6 +11,14 @@ interface GovHeaderProps {
 }
 
 export function GovHeader({ currentUser = "Admin User", onLogout, onNavigate, currentPage = "dashboard" }: GovHeaderProps) {
+  const toggleTheme = () => {
+    const root = document.documentElement;
+    root.classList.toggle('dark');
+  };
+
+  const goBack = () => window.history.back();
+  const goForward = () => window.history.forward();
+
   return (
     <header className="bg-card border-b-4 border-primary shadow-sm">
       <div className="container mx-auto px-4">
@@ -20,7 +28,17 @@ export function GovHeader({ currentUser = "Admin User", onLogout, onNavigate, cu
             <img src={mcaLogo} alt="Ministry of Corporate Affairs" className="h-16 w-auto" />
             <img src={pmInternshipLogo} alt="PM Internship Scheme" className="h-16 w-auto" />
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="icon" aria-label="Back" onClick={goBack} className="text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" aria-label="Forward" onClick={goForward} className="text-muted-foreground hover:text-foreground">
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" aria-label="Toggle theme" onClick={toggleTheme} className="text-muted-foreground hover:text-foreground">
+              <Moon className="h-4 w-4 hidden dark:block" />
+              <Sun className="h-4 w-4 dark:hidden" />
+            </Button>
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <User className="h-4 w-4" />
               <span>{currentUser}</span>
