@@ -29,25 +29,8 @@ interface Internship {
     responsibilities: string[];
 }
 
-<<<<<<< HEAD
-interface Candidate {
-    candidate_id: string;
-    name: string;
-    candidate_degree: string;
-    technical_skills: string;
-    location_preference_1: string;
-    projects: string;
-    status: 'shortlisted' | 'promising' | 'not-recommended';
-    ranking: number;
-}
-
-export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigate }: InternshipDetailPageProps) {
-  const [internship, setInternship] = useState<Internship | null>(null);
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-=======
 export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigate, currentUser }: InternshipDetailPageProps) {
   const [internship, setInternship] = useState<Internship | null>(null);
->>>>>>> ea97724e9a984e68f2e2d7ddda143e13ea8dc069
   const [aiProgress, setAiProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -57,18 +40,9 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
 
   useEffect(() => {
     setLoading(true);
-<<<<<<< HEAD
-    Promise.all([
-      apiJson<Internship>(`/api/internships/${internshipId}`),
-      apiJson<Candidate[]>(`/api/internships/${internshipId}/candidates`)
-    ])
-      .then(([internshipData, candidateData]) => {
-=======
     apiJson<Internship>(`/api/internships/${internshipId}`)
       .then((internshipData) => {
->>>>>>> ea97724e9a984e68f2e2d7ddda143e13ea8dc069
         setInternship(internshipData);
-        setCandidates(candidateData);
       })
       .catch(error => console.error('Error fetching data:', error))
       .finally(() => setLoading(false));
@@ -169,11 +143,6 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                 
                 <h3 className="text-lg font-semibold mb-3">Skills Required</h3>
                 <div className="flex flex-wrap gap-2 mb-6">
-<<<<<<< HEAD
-                  {internship.skills_required.map((skill) => (
-                    <Badge key={skill} variant="outline">{skill}</Badge>
-                  ))}
-=======
                   {internship.skills_required &&
                     String(internship.skills_required)
                       .split(',')
@@ -182,21 +151,12 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                           {skill.trim()}
                         </Badge>
                       ))}
->>>>>>> ea97724e9a984e68f2e2d7ddda143e13ea8dc069
                 </div>
               </div>
 
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <h3 className="text-lg font-semibold mb-3">Responsibilities</h3>
                 <ul className="space-y-2">
-<<<<<<< HEAD
-                  {internship.responsibilities.map((responsibility, index) => (
-                    <li key={index} className="flex items-start gap-2 text-muted-foreground">
-                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                      {responsibility}
-                    </li>
-                  ))}
-=======
                   {internship.responsibilities &&
                     String(internship.responsibilities)
                       .split(',')
@@ -206,7 +166,6 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                           {responsibility.trim()}
                         </li>
                       ))}
->>>>>>> ea97724e9a984e68f2e2d7ddda143e13ea8dc069
                 </ul>
               </div>
             </div>
