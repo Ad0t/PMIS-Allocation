@@ -33,7 +33,7 @@ export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, curre
   const [filterCategory, setFilterCategory] = useState<string>("all");
 
   useEffect(() => {
-    apiJson<Internship[]>("/api/internship")
+    apiJson<Internship[]>("/api/internships")
       .then((data) => {
         setInternships(data);
         const uniqueCategories = Array.from(new Set(data.map(internship => internship.category)));

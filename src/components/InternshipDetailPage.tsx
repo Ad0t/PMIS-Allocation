@@ -37,7 +37,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
   const [activeTab, setActiveTab] = useState("description");
   const [loading, setLoading] = useState(true);
 
-
+  const candidates: any[] = [];
   useEffect(() => {
     setLoading(true);
     apiJson<Internship>(`/api/internships/${internshipId}`)
