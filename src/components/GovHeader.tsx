@@ -73,13 +73,13 @@ export function GovHeader({ currentUser = "Admin User", onLogout, onNavigate, cu
               >
                 Internships
               </Button>
-              <Button 
+              {/* <Button 
                 variant="ghost" 
                 className={currentPage === "candidates" ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"}
                 onClick={() => onNavigate?.("candidates")}
               >
                 Contact Us
-              </Button>
+              </Button> */}
             </div>
           </div>
         </nav>
