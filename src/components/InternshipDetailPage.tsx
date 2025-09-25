@@ -37,7 +37,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
   const [activeTab, setActiveTab] = useState("description");
   const [loading, setLoading] = useState(true);
 
-  const candidates: any[] = []; 
+  const candidates: any[] = [];
   useEffect(() => {
     setLoading(true);
     apiJson<Internship>(`/api/internships/${internshipId}`)
@@ -133,7 +133,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 max-w-md">
             <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="applicants">Candidates</TabsTrigger>
+            <TabsTrigger value="applicants">Applicants</TabsTrigger>
           </TabsList>
 
           <TabsContent value="description" className="mt-8">
@@ -179,7 +179,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                   <h2 className="text-xl font-semibold">Candidate Applications</h2>
                   <Button onClick={runAiShortlisting} variant="government" className="gap-2" disabled={internship.status !== "Closed"}>
                     <Sparkles className="h-4 w-4" />
-                    Run Shortlisting
+                    Run AI Shortlisting
                   </Button>
                 </div>
 

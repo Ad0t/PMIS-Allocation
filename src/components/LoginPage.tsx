@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Lock } from "lucide-react";
-import mcaLogo from "@/assets/Ministry_of_Corporate_Affairs_India.png";
+import mcaLogo from "@/assets/Emblem_MCA.jpg";
 import pmInternshipLogo from "@/assets/PMIS_Logo.png";
 
 interface LoginPageProps {

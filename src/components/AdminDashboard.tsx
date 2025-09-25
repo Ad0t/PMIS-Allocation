@@ -80,7 +80,7 @@ export function AdminDashboard({ onLogout, onNavigate, currentUser }: AdminDashb
         <div className="my-12">
           <div className="flex items-center justify-center">
             <span className="h-0.5 w-32 bg-orange-500"></span>
-            <h2 className="text-4xl font-bold text-gray-800 px-8 whitespace-nowrap">Blah Blah</h2>
+            <h2 className="text-4xl font-bold text-foreground px-8 whitespace-nowrap">Partner Organizations</h2>
             <span className="h-0.5 w-32 bg-orange-500"></span>
           </div>
         </div>
