@@ -10,7 +10,6 @@ interface InternshipTileProps {
   companyLogo?: string;
   location: string;
   capacity: number;
-  // applicants: number;
   status: "Open" | "Closed";
   onClick?: (id: string) => void;
 }
@@ -72,7 +71,7 @@ export function InternshipTile({
           </div>
           <div className="flex items-center space-x-1">
             <Users className="h-4 w-4" />
-            <span>{capacity} applicants</span>
+            <span>{capacity} candidates</span>
           </div>
         </div>
       </CardContent>
