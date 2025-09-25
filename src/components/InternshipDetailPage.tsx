@@ -229,15 +229,6 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                   <Progress value={aiProgress} className="mb-4" />
                   <p className="text-sm text-muted-foreground">{aiProgress}% Complete</p>
                   
-                  {/* {aiProgress === 100 && (
-                    <Button 
-                      onClick={() => setShowResults(true)} 
-                      variant="government" 
-                      className="mt-6"
-                    >
-                      Show Results
-                    </Button>
-                  )} */}
                 </div>
               </div>
             )}
@@ -250,10 +241,11 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                   <TableHeader>
                     <TableRow>
                       <TableHead>ID</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Education</TableHead>
+                      {/* <TableHead>Name</TableHead> */}
+                      <TableHead>Qualification</TableHead>
                       <TableHead>Skills</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>Skills Required</TableHead>
+                      <TableHead>Score</TableHead>
                       <TableHead>Ranking</TableHead>
                     </TableRow>
                   </TableHeader>

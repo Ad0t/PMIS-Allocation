@@ -13,6 +13,7 @@ const Index = () => {
   const [currentState, setCurrentState] = useState<AppState>("login");
   const [selectedInternshipId, setSelectedInternshipId] = useState<string>("");
   const [currentUser, setCurrentUser] = useState<string>("");
+  const [loginError, setLoginError] = useState<string>("");
 
   const handleLogin = async (username: string, password: string) => {
     try {
@@ -29,12 +30,13 @@ const Index = () => {
       if (data.success) {
         setCurrentUser(data.username);
         setCurrentState("dashboard");
+        setLoginError("");
       } else {
-        // Handle failed login, e.g., show an error message
+        setLoginError(data.message || "Invalid credentials");
         console.error("Login failed:", data.message);
-        // You can also use a state to display the error to the user
       }
     } catch (error) {
+      setLoginError("An unexpected error occurred.");
       console.error("Login error:", error);
     }
   };
@@ -69,7 +71,7 @@ const Index = () => {
   };
 
   if (currentState === "login") {
-    return <LoginPage onLogin={handleLogin} />;
+    return <LoginPage onLogin={handleLogin} loginError={loginError} setLoginError={setLoginError} />;
   }
 
   if (currentState === "candidates") {

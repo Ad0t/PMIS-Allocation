@@ -6,12 +6,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Shield, Lock } from "lucide-react";
 import mcaLogo from "@/assets/Emblem_MCA.jpg";
 import pmInternshipLogo from "@/assets/PMIS_Logo.png";
+import { cn } from "@/lib/utils";
 
 interface LoginPageProps {
-  onLogin: (username: string, password: string) => void;
+  onLogin: (username: string, password: string) => Promise<void>;
+  loginError: string;
+  setLoginError: (error: string) => void;
 }
 
-export function LoginPage({ onLogin }: LoginPageProps) {
+export function LoginPage({ onLogin, loginError, setLoginError }: LoginPageProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -19,12 +22,8 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      onLogin(username, password);
-      setIsLoading(false);
-    }, 1000);
+    await onLogin(username, password);
+    setIsLoading(false);
   };
 
   return (
@@ -78,9 +77,11 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                   type="password"
                   placeholder="Enter your password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {setPassword(e.target.value); setLoginError("");}}
                   required
+                  className={cn(loginError && "border-destructive")}
                 />
+                {loginError && <p className="text-sm font-medium text-destructive pt-1">{loginError}</p>}
               </div>
               
               <Button 

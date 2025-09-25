@@ -34,15 +34,18 @@ export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, curre
   const [filterStatus, setFilterStatus] = useState<"all" | "Open" | "Closed">("all");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [paginationPage, setPaginationPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     apiJson<Internship[]>("/api/internships")
       .then((data) => {
         setInternships(data);
         const uniqueCategories = Array.from(new Set(data.map(internship => internship.category)));
         setCategories(uniqueCategories);
       })
-      .catch(error => console.error('Error fetching internships:', error));
+      .catch(error => console.error('Error fetching internships:', error))
+      .finally(() => setLoading(false));;
   }, []);
 
   const filteredInternships = internships.filter(internship => {
@@ -60,6 +63,15 @@ export function InternshipsPage({ onLogout, onInternshipClick, onNavigate, curre
       (paginationPage - 1) * ITEMS_PER_PAGE,
       paginationPage * ITEMS_PER_PAGE
     );
+  if (loading) {
+    return (
+        <div className="flex items-center justify-center h-screen">
+            <p className="text-xl">
+                {"Loading internships..."}
+            </p>
+        </div>
+    );
+  }
 
 return (
     <div className="min-h-screen bg-background">
