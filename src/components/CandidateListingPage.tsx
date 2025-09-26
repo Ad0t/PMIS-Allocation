@@ -36,12 +36,12 @@ export function CandidateListingPage({ internshipId, onBack, onLogout, currentUs
     const fetchData = async () => {
       try {
         const [internshipData, candidatesData] = await Promise.all([
-          apiJson<any>(`/api/internships/${internshipId}`), // eslint-disable-line @typescript-eslint/no-explicit-any
-          apiJson<any[]>(`/api/internships/${internshipId}/candidates`) // eslint-disable-line @typescript-eslint/no-explicit-any
+          apiJson<any>(`/api/internships/${internshipId}`), 
+          apiJson<any[]>(`/api/internships/${internshipId}/candidates`) 
         ]);
         setInternshipInfo(internshipData);
         setCandidates(candidatesData);
-      } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+      } catch (err: any) { 
         setError(err.message || 'Error fetching data');
       } finally {
         setLoading(false);

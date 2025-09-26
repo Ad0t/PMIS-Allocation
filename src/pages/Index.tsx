@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LoginPage } from "@/components/LoginPage";
 import { AdminDashboard } from "@/components/AdminDashboard";
+import { KeyHighlightsPage } from "@/components/KeyHighlightsPage";
 import { CandidateListingPage } from "@/components/CandidateListingPage";
 import { InternshipDetailPage } from "@/components/InternshipDetailPage";
 import { InternshipsPage } from "@/components/InternshipsPage";
@@ -120,12 +121,22 @@ const Index = () => {
     );
   }
 
+  if (currentState === "reports") {
+    return (
+      <KeyHighlightsPage
+        onLogout={handleLogout}
+        onNavigate={handleNavigate}
+        currentUser={currentUser}
+      />
+    );
+  }
+
   return (
-    <AdminDashboard
-      onLogout={handleLogout}
-      onNavigate={handleNavigate}
-      currentUser={currentUser}
-    />
+      <AdminDashboard
+        onLogout={handleLogout}
+        onNavigate={handleNavigate}
+        currentUser={currentUser}
+      />
   );
 };
 

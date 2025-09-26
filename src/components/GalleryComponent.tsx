@@ -80,7 +80,6 @@ const GallerySection: React.FC = () => {
               <Camera className="h-5 w-5" />
               <span>Photos</span>
             </div>
-            {/* Removed extra bottom-right arrow */}
           </CardFooter>
         </Card>
 
@@ -106,7 +105,6 @@ const GallerySection: React.FC = () => {
                               const p = el.play();
                               if (p && typeof p.catch === 'function') {
                                 p.catch(() => {
-                                  // ignore autoplay errors; browser may still start once ready
                                 });
                               }
                             };
