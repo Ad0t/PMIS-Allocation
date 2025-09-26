@@ -29,25 +29,68 @@ interface Internship {
     responsibilities: string[];
 }
 
+interface Candidate {
+  candidate_id: string;
+  name: string;
+  candidate_degree: string;
+  technical_skills: string;
+  projects: string;
+  status: string;
+  ranking: number;
+  score: number;
+  rank: number;
+}
+
+
 export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigate, currentUser }: InternshipDetailPageProps) {
   const [internship, setInternship] = useState<Internship | null>(null);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [aiProgress, setAiProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [loading, setLoading] = useState(true);
 
-  const candidates: any[] = [];
   useEffect(() => {
     setLoading(true);
-    apiJson<Internship>(`/api/internships/${internshipId}`)
-      .then((internshipData) => {
-        setInternship(internshipData);
-      })
+    const internshipPromise = apiJson<Internship>(`/api/internships/${internshipId}`);
+    const candidatesPromise = apiJson<Candidate[]>(`/api/candidates`);
+    Promise.all([internshipPromise, candidatesPromise])
+    .then(([internshipData, candidatesData]) => {
+      setInternship(internshipData);
+      setCandidates(candidatesData); 
+    })
       .catch(error => console.error('Error fetching data:', error))
       .finally(() => setLoading(false));
   }, [internshipId]);
-
+  
+  const runAiShortlisting = async () => {
+    setShowProgress(true);
+    setActiveTab("applicants");
+    setAiProgress(0);
+    
+    const interval = setInterval(() => {
+      setAiProgress(prev => Math.min(prev + 10, 90));
+    }, 300);
+    
+    try {
+      const results = await apiJson(`/api/shortlist/${internshipId}`);
+      const shortlistedCandidates = results.data[0]; 
+      setCandidates(shortlistedCandidates);
+      setAiProgress(100);
+      clearInterval(interval);
+      setTimeout(() => {
+        setShowProgress(false);
+        setShowResults(true);
+      }, 500);
+    } catch (error) {
+      console.error('Error running AI shortlisting:', error);
+      clearInterval(interval);
+      setShowProgress(false);
+      
+    }
+  };
+  
   if (loading || !internship) {
     return (
         <div className="flex items-center justify-center h-screen">
@@ -58,27 +101,6 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
     );
   }
 
-
-  const runAiShortlisting = () => {
-    setShowProgress(true);
-    setActiveTab("applicants");
-    setAiProgress(0);
-    
-    const interval = setInterval(() => {
-      setAiProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setShowProgress(false);
-            setShowResults(true);
-          }, 1000);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 300);
-  };
-
   const getStatusVariant = (status: string) => {
     switch (status) {
       case "shortlisted": return "success";
@@ -87,7 +109,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
       default: return "outline";
     }
   };
-
+  
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "shortlisted": return "Shortlisted";
@@ -253,8 +275,9 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                     {candidates.map((candidate) => (
                       <TableRow key={candidate.candidate_id}>
                         <TableCell>{candidate.candidate_id}</TableCell>
-                        <TableCell className="font-medium">{candidate.name}</TableCell>
+                        {/* <TableCell className="font-medium">{candidate.name}</TableCell> */}
                         <TableCell>{candidate.candidate_degree}</TableCell>
+                        {/* <TableCell>{candidate.technical_skills}</TableCell> */}
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
                             {candidate.technical_skills.split(',').map((skill) => (
@@ -263,6 +286,19 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                               </Badge>
                             ))}
                           </div>
+                        {/* </TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {internship.skills_required.split(',').map((skill) => (
+                              <Badge key={skill} variant="outline" className="text-xs">
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div> */}
+                        <TableCell>{internship.skills_required.join(', ')}</TableCell>
+                        <TableCell className="font-semibold">
+                          {candidate.score.toFixed(2)}
+                        </TableCell>
                         </TableCell>
                         <TableCell>
                           <Badge variant={getStatusVariant(candidate.status)}>
