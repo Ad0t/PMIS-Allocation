@@ -53,13 +53,10 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
 
   useEffect(() => {
     setLoading(true);
-    const internshipPromise = apiJson<Internship>(`/api/internships/${internshipId}`);
-    const candidatesPromise = apiJson<Candidate[]>(`/api/candidates`);
-    Promise.all([internshipPromise, candidatesPromise])
-    .then(([internshipData, candidatesData]) => {
-      setInternship(internshipData);
-      setCandidates(candidatesData); 
-    })
+    apiJson<Internship>(`/api/internships/${internshipId}`)
+      .then((internshipData) => {
+        setInternship(internshipData);
+      })
       .catch(error => console.error('Error fetching data:', error))
       .finally(() => setLoading(false));
   }, [internshipId]);
@@ -70,24 +67,29 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
     setAiProgress(0);
     
     const interval = setInterval(() => {
-      setAiProgress(prev => Math.min(prev + 10, 90));
-    }, 300);
+    setAiProgress(prev => {
+      if (prev >= 90) {
+        clearInterval(interval);
+        return 90;
+      }
+      return prev + 10;
+    });
+  }, 200);
     
     try {
       const results = await apiJson(`/api/shortlist/${internshipId}`);
       const shortlistedCandidates = results.data[0]; 
-      setCandidates(shortlistedCandidates);
       setAiProgress(100);
-      clearInterval(interval);
       setTimeout(() => {
+        setCandidates(shortlistedCandidates);
         setShowProgress(false);
         setShowResults(true);
+        clearInterval(interval);
       }, 500);
     } catch (error) {
       console.error('Error running AI shortlisting:', error);
       clearInterval(interval);
       setShowProgress(false);
-      
     }
   };
   
