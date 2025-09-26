@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import logging
 from typing import Optional
 import requests
-
+import gradio_client as gr
 
 load_dotenv()
 
@@ -174,47 +174,160 @@ def get_candidates_for_internship(internship_id):
         logger.exception(f"Error fetching candidates for internship {internship_id}")
         return jsonify({"error": str(e)}), 500
 
+# In app.py
+
 @app.route('/api/shortlist/<internship_id>')
 def shortlist_candidates(internship_id):
-
     guard = supabase_required()
     if guard:
         return guard
 
+    logger.info(f"Fetching shortlist for internship {internship_id} from 'results' table.")
+
     try:
-        internship_response = supabase.table('internship').select("skills_required").eq('internship_id', internship_id).single().execute()
-        internship_data = internship_response.data
-        if not internship_data:
-            return jsonify({"error": "Internship not found"}), 404
-        skills_required = internship_data.get('skills_required', '')
+        # Fetch the results from the 'results' table, filtered by the internship_id
+        # The .order() method will sort the results by the 'Rank' column
+        response = supabase.table('results').select("*").eq('InternshipID', internship_id).order('Rank').execute()
+        results = response.data or []
 
-        # Fetch candidates for the internship
-        candidates_response = supabase.table('candidates_ts').select("technical_skills").eq('internship_id', internship_id).execute()
-        candidates_data = candidates_response.data
-        if not candidates_data:
-            return jsonify({"error": "No candidates found for this internship"}), 404
-        
-        model_input = {
-            "data": [
-                skills_required,
-                str([candidate.get('technical_skills', '') for candidate in candidates_data])
-            ]
-        }
-        # Call the Hugging Face Space API
-        hf_api_url = MODEL_URL
-        hf_response = requests.post(hf_api_url, json=model_input)
-        hf_response.raise_for_status()  # Raise an exception for bad status codes
-        
-        # Return the results from the Hugging Face Space
-        return jsonify(hf_response.json())
+        if not results:
+            # Return an empty list in the expected format if no results are found
+            return jsonify({"data": [[]]}), 200
 
-    except requests.exceptions.RequestException as e:
-        logger.exception("Error calling Hugging Face Space API")
-        return jsonify({"error": f"Error calling Hugging Face Space API: {e}"}), 500
+        # The frontend expects the results to be nested inside a list within the 'data' key
+        final_response = {"data": [results]}
+        
+        return jsonify(final_response)
+
     except Exception as e:
-        logger.exception(f"An error occurred while shortlisting for internship {internship_id}")
+        logger.exception(f"An error occurred while fetching shortlist for internship {internship_id}")
         return jsonify({"error": str(e)}), 500
 
+# @app.route('/api/shortlist/<internship_id>')
+# def shortlist_candidates(internship_id):
+#     guard = supabase_required()
+#     if guard:
+#         return guard
+
+#     # Ensure the MODEL_URL is set
+#     model_base_url = os.getenv("MODEL_URL")
+#     if not model_base_url:
+#         return jsonify({"error": "MODEL_URL environment variable is not set"}), 500
+
+#     try:
+#         predict_url = f"{model_base_url.rstrip('/')}/api/predict"
+
+#         # Step 1: Trigger the AI allocation process
+#         # allocation_url = f"{model_base_url.rstrip('/')}/safe_run_allocation"
+#         # payload = {"data": [internship_id]}
+
+#         allocation_payload = {
+#             "data": [internship_id],
+#             "api_name": "/safe_run_allocation"
+#         }
+        
+#         # logger.info(f"Triggering allocation for internship {internship_id} at {allocation_url}")
+#         # allocation_response = requests.post(allocation_url, json=payload)
+#         # allocation_response.raise_for_status()
+#         # logger.info("Allocation process triggered successfully.")
+#         logger.info(f"Triggering allocation for internship {internship_id} at {predict_url}")
+#         allocation_response = requests.post(predict_url, json=allocation_payload)
+#         allocation_response.raise_for_status()
+#         logger.info("Allocation process triggered successfully.")
+
+
+#         # Step 2: Fetch the results from the results endpoint
+#         # results_url = f"{model_base_url.rstrip('/')}/run/safe_get_results"
+#         results_payload = {
+#             "data": [internship_id],
+#             "api_name": "/safe_get_results"
+#         }
+#         # logger.info(f"Fetching results for internship {internship_id} from {results_url}")
+#         # results_response = requests.post(results_url, json=payload)
+#         # results_response.raise_for_status()
+#         logger.info(f"Fetching results for internship {internship_id} from {predict_url}")
+#         results_response = requests.post(predict_url, json=results_payload)
+#         results_response.raise_for_status()
+#         logger.info("Results fetched successfully.")
+        
+#         # The Gradio API returns a JSON structure like: {"data": [...]}.
+#         # We will return this directly to the frontend.
+#         return jsonify(results_response.json())
+
+#     except requests.exceptions.RequestException as e:
+#         error_details = f"Error calling Hugging Face Space API: {e}"
+#         if e.response is not None:
+#             error_details += f" | Status: {e.response.status_code} | Response: {e.response.text}"
+#         logger.exception(error_details)
+#         return jsonify({"error": error_details}), 500
+#     except Exception as e:
+#         logger.exception(f"An unexpected error occurred while shortlisting for internship {internship_id}")
+#         return jsonify({"error": str(e)}), 500
+
+# @app.route('/api/shortlist/<internship_id>')
+# def shortlist_candidates(internship_id):
+#     guard = supabase_required()
+#     if guard:
+#         return guard
+
+#     model_base_url = os.getenv("MODEL_URL")
+#     if not model_base_url:
+#         logger.error("MODEL_URL environment variable is not set")
+#         return jsonify({"error": "Model endpoint is not configured"}), 500
+
+#     try:
+#         # Step 1: Trigger the AI allocation process using the /run/<api_name> endpoint
+#         allocation_url = f"{model_base_url.rstrip('/')}/run/safe_run_allocation"
+#         # The payload for this structure is simpler, just the data array
+#         allocation_payload = {"data": [internship_id]}
+        
+#         logger.info(f"Triggering allocation for internship {internship_id} at {allocation_url}")
+#         allocation_response = requests.post(allocation_url, json=allocation_payload)
+#         allocation_response.raise_for_status()
+#         logger.info("Allocation process triggered successfully.")
+        
+#         # We need to wait for the allocation to finish. Since the Gradio app does not provide a status,
+#         # we will add a small delay here. You may need to adjust this delay.
+#         import time
+#         time.sleep(20) # Wait 20 seconds for the model to run
+
+#         # Step 2: Fetch the results from the results endpoint
+#         results_url = f"{model_base_url.rstrip('/')}/run/safe_get_results"
+#         results_payload = {"data": [internship_id]}
+        
+#         logger.info(f"Fetching results for internship {internship_id} from {results_url}")
+#         results_response = requests.post(results_url, json=results_payload)
+#         results_response.raise_for_status()
+        
+#         logger.info("Results fetched successfully.")
+        
+#         # The result from the Gradio API is often a stringified JSON inside the 'data' array.
+#         # We need to parse it before sending it to the frontend.
+#         api_result = results_response.json()
+        
+#         # Assuming the actual list of candidates is the first item in the 'data' array
+#         # and it might be a JSON string.
+#         results_data = api_result.get("data", [])
+#         if results_data and isinstance(results_data[0], str):
+#             # If the data is a string, parse it as JSON
+#             parsed_results = json.loads(results_data[0])
+#             # Re-wrap it in the original structure for the frontend
+#             final_response = {"data": [parsed_results]}
+#         else:
+#             # If it's already a list/dict, pass it through
+#             final_response = api_result
+
+#         return jsonify(final_response)
+
+#     except requests.exceptions.RequestException as e:
+#         error_details = f"Error calling Hugging Face Space API: {e}"
+#         if e.response is not None:
+#             error_details += f" | Status: {e.response.status_code} | Response: {e.response.text}"
+#         logger.exception(error_details)
+#         return jsonify({"error": error_details}), 500
+#     except Exception as e:
+#         logger.exception(f"An unexpected error occurred while shortlisting for internship {internship_id}")
+#         return jsonify({"error": str(e)}), 500
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 5000))
     logger.info(f"Starting development server on port {port}")

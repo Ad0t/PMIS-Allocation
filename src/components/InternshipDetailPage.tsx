@@ -1,3 +1,5 @@
+// In src/components/InternshipDetailPage.tsx
+
 import { useState, useEffect } from "react";
 import { apiJson } from "@/lib/api";
 import { GovHeader } from "./GovHeader";
@@ -29,16 +31,13 @@ interface Internship {
     responsibilities: string[];
 }
 
+// Updated Candidate interface to match the 'results' table structure
 interface Candidate {
-  candidate_id: string;
-  name: string;
-  candidate_degree: string;
-  technical_skills: string;
-  projects: string;
-  status: string;
-  ranking: number;
-  score: number;
-  rank: number;
+  CandidateID: string;
+  Projects: string;
+  Rank: number;
+  Score: number;
+  Technical_Skills: string;
 }
 
 
@@ -64,17 +63,7 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
   const runAiShortlisting = async () => {
     setShowProgress(true);
     setActiveTab("applicants");
-    setAiProgress(0);
-    
-    const interval = setInterval(() => {
-    setAiProgress(prev => {
-      if (prev >= 90) {
-        clearInterval(interval);
-        return 90;
-      }
-      return prev + 10;
-    });
-  }, 200);
+    setAiProgress(30);
     
     try {
       const results = await apiJson(`/api/shortlist/${internshipId}`);
@@ -84,11 +73,9 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
         setCandidates(shortlistedCandidates);
         setShowProgress(false);
         setShowResults(true);
-        clearInterval(interval);
-      }, 500);
+      }, 12000); // A short delay for a smoother UI transition
     } catch (error) {
       console.error('Error running AI shortlisting:', error);
-      clearInterval(interval);
       setShowProgress(false);
     }
   };
@@ -103,22 +90,16 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
     );
   }
 
-  const getStatusVariant = (status: string) => {
-    switch (status) {
-      case "shortlisted": return "success";
-      case "promising": return "default";
-      case "not-recommended": return "secondary";
-      default: return "outline";
-    }
+  const getStatusVariant = (rank: number) => {
+    if (rank <= 5) return "success";
+    if (rank <= 10) return "default";
+    return "secondary";
   };
   
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "shortlisted": return "Shortlisted";
-      case "promising": return "Promising";
-      case "not-recommended": return "Not Recommended";
-      default: return status;
-    }
+  const getStatusLabel = (rank: number) => {
+    if (rank <= 5) return "Top Candidate";
+    if (rank <= 10) return "Recommended";
+    return "Considerable";
   };
 
   return (
@@ -201,58 +182,25 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
               <div className="bg-card p-6 rounded-lg border shadow-sm">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-semibold">Candidate Applications</h2>
-                  <Button onClick={runAiShortlisting} variant="government" className="gap-2" disabled={internship.status !== "Closed"}>
+                  <Button onClick={runAiShortlisting} variant="government" className="gap-2">
                     <Sparkles className="h-4 w-4" />
                     Run AI Shortlisting
                   </Button>
                 </div>
-
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Education</TableHead>
-                      <TableHead>Skills</TableHead>
-                      <TableHead>Projects</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {candidates.map((candidate) => (
-                      <TableRow key={candidate.candidate_id}>
-                        <TableCell>{candidate.candidate_id}</TableCell>
-                        <TableCell className="font-medium">{candidate.name}</TableCell>
-                        <TableCell>{candidate.candidate_degree}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {candidate.technical_skills.split(',').map((skill) => (
-                              <Badge key={skill} variant="outline" className="text-xs">
-                                {skill}
-                              </Badge>
-                            ))}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {candidate.projects}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <p className="text-muted-foreground">Click "Run AI Shortlisting" to view the ranked candidates for this internship.</p>
               </div>
             )}
 
             {showProgress && (
               <div className="bg-card p-12 rounded-lg border shadow-sm text-center">
                 <div className="max-w-md mx-auto">
-                  <Sparkles className="h-12 w-12 mx-auto mb-6 text-primary animate-spin" />
-                  <h2 className="text-xl font-semibold mb-4">AI Smart Allocation Engine in Action!</h2>
+                  <Sparkles className="h-12 w-12 mx-auto mb-6 text-primary animate-pulse" />
+                  <h2 className="text-xl font-semibold mb-4">Fetching Shortlisted Candidates...</h2>
                   <p className="text-muted-foreground mb-8">
-                    Our AI is finding the best matches... Please wait.
+                    Please wait while we load the results.
                   </p>
                   <Progress value={aiProgress} className="mb-4" />
                   <p className="text-sm text-muted-foreground">{aiProgress}% Complete</p>
-                  
                 </div>
               </div>
             )}
@@ -264,51 +212,59 @@ export function InternshipDetailPage({ internshipId, onBack, onLogout, onNavigat
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ID</TableHead>
-                      {/* <TableHead>Name</TableHead> */}
-                      <TableHead>Qualification</TableHead>
-                      <TableHead>Skills</TableHead>
-                      <TableHead>Skills Required</TableHead>
+                      <TableHead>Rank</TableHead>
+                      <TableHead>Candidate ID</TableHead>
+                      <TableHead>Technical Skills</TableHead>
+                      <TableHead>Required Skills</TableHead>
                       <TableHead>Score</TableHead>
-                      <TableHead>Ranking</TableHead>
+                      <TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {candidates.map((candidate) => (
-                      <TableRow key={candidate.candidate_id}>
-                        <TableCell>{candidate.candidate_id}</TableCell>
-                        {/* <TableCell className="font-medium">{candidate.name}</TableCell> */}
-                        <TableCell>{candidate.candidate_degree}</TableCell>
-                        {/* <TableCell>{candidate.technical_skills}</TableCell> */}
+                      <TableRow key={candidate.CandidateID}>
+                        <TableCell className="font-semibold">#{candidate.Rank}</TableCell>
+                        <TableCell className="font-medium">{candidate.CandidateID}</TableCell>
                         <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {candidate.technical_skills.split(',').map((skill) => (
-                              <Badge key={skill} variant="outline" className="text-xs">
-                                {skill}
-                              </Badge>
-                            ))}
+                          <div className="flex flex-wrap gap-1 max-w-xs">
+                            {candidate.Technical_Skills && typeof candidate.Technical_Skills === 'string' ? (
+                              <>
+                                {candidate.Technical_Skills.split(',').slice(0, 4).map((skill) => (
+                                  <Badge key={skill.trim()} variant="secondary" className="text-xs">
+                                    {skill.trim()}
+                                  </Badge>
+                                ))}
+                                {candidate.Technical_Skills.split(',').length > 4 && (
+                                    <Badge variant="outline" className="text-xs">
+                                        +{candidate.Technical_Skills.split(',').length - 4} more
+                                    </Badge>
+                                )}
+                              </>
+                            )  : (
+                              <Badge variant="outline" className="text-xs">No skills listed</Badge>
+                            // {candidate.Technical_Skills.split(',').slice(0, 4).map((skill) => (
+                            //   <Badge key={skill.trim()} variant="secondary" className="text-xs">
+                            //     {skill.trim()}
+                            //   </Badge>
+                            // ))}
+                            // {candidate.Technical_Skills.split(',').length > 4 && (
+                            //     <Badge variant="outline" className="text-xs">
+                            //         +{candidate.Technical_Skills.split(',').length - 4} more
+                            //     </Badge>
+                            )}
                           </div>
-                        {/* </TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {internship.skills_required.split(',').map((skill) => (
-                              <Badge key={skill} variant="outline" className="text-xs">
-                                {skill}
-                              </Badge>
-                            ))}
-                          </div> */}
-                        <TableCell>{internship.skills_required.join(', ')}</TableCell>
+                        </TableCell>
+                        
+                        <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
+                          {internship.skills_required}
+                        </TableCell>
                         <TableCell className="font-semibold">
-                          {candidate.score.toFixed(2)}
-                        </TableCell>
+                          {(candidate.Score * 100).toFixed(2)}%
                         </TableCell>
                         <TableCell>
-                          <Badge variant={getStatusVariant(candidate.status)}>
-                            {getStatusLabel(candidate.status)}
+                          <Badge variant={getStatusVariant(candidate.Rank)}>
+                            {getStatusLabel(candidate.Rank)}
                           </Badge>
-                        </TableCell>
-                        <TableCell className="font-semibold">
-                          #{candidate.ranking}
                         </TableCell>
                       </TableRow>
                     ))}
