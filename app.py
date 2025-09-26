@@ -5,22 +5,22 @@ import os
 from dotenv import load_dotenv
 import logging
 from typing import Optional
+import requests
+
 
 load_dotenv()
 
 BUILD_DIR = os.getenv("FRONTEND_BUILD_DIR", "dist")
 app = Flask(__name__, static_folder=BUILD_DIR, static_url_path="/")
 
-# Configure logging
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 logger = logging.getLogger(__name__)
 
-# CORS configuration (allow all by default, configurable via env)
 CORS(app, resources={r"/api/*": {"origins": os.getenv("CORS_ORIGINS", "*").split(",")}})
 
-# Supabase initialization (safe)
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+MODEL_URL = os.getenv("MODEL_URL")
 
 supabase: Optional[Client] = None
 if SUPABASE_URL and SUPABASE_KEY:
@@ -31,14 +31,6 @@ if SUPABASE_URL and SUPABASE_KEY:
         logger.error(f"Failed to initialize Supabase: {e}")
 else:
     logger.warning("Supabase credentials not set; related endpoints will return 503")
-
-
-
-def capitalize_words(s):
-    if isinstance(s, str):
-        return ' '.join(word.capitalize() for word in s.split())
-    return s
-
 
 def supabase_required():
     if supabase is None:
@@ -182,7 +174,46 @@ def get_candidates_for_internship(internship_id):
         logger.exception(f"Error fetching candidates for internship {internship_id}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/shortlist/<internship_id>')
+def shortlist_candidates(internship_id):
 
+    guard = supabase_required()
+    if guard:
+        return guard
+
+    try:
+        internship_response = supabase.table('internship').select("skills_required").eq('internship_id', internship_id).single().execute()
+        internship_data = internship_response.data
+        if not internship_data:
+            return jsonify({"error": "Internship not found"}), 404
+        skills_required = internship_data.get('skills_required', '')
+
+        # Fetch candidates for the internship
+        candidates_response = supabase.table('candidates_ts').select("technical_skills").eq('internship_id', internship_id).execute()
+        candidates_data = candidates_response.data
+        if not candidates_data:
+            return jsonify({"error": "No candidates found for this internship"}), 404
+        
+        model_input = {
+            "data": [
+                skills_required,
+                str([candidate.get('technical_skills', '') for candidate in candidates_data])
+            ]
+        }
+        # Call the Hugging Face Space API
+        hf_api_url = MODEL_URL
+        hf_response = requests.post(hf_api_url, json=model_input)
+        hf_response.raise_for_status()  # Raise an exception for bad status codes
+        
+        # Return the results from the Hugging Face Space
+        return jsonify(hf_response.json())
+
+    except requests.exceptions.RequestException as e:
+        logger.exception("Error calling Hugging Face Space API")
+        return jsonify({"error": f"Error calling Hugging Face Space API: {e}"}), 500
+    except Exception as e:
+        logger.exception(f"An error occurred while shortlisting for internship {internship_id}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 5000))
