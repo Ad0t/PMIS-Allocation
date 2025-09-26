@@ -4,6 +4,15 @@ import GallerySection from '@/components/GalleryComponent';
 import LogoCarousel from "./LogoCarousel";
 import { apiJson } from "@/lib/api";
 
+interface InternshipLite {
+  internship_id: string;
+}
+
+interface CandidateLite {
+  candidate_id?: string; // allow optional because shape unknown
+  id?: string;
+}
+
 interface AdminDashboardProps {
   onLogout: () => void;
   onNavigate?: (page: string) => void;
@@ -20,15 +29,12 @@ export function AdminDashboard({ onLogout, onNavigate, currentUser }: AdminDashb
 
     const fetchCounts = async () => {
       try {
-        const internships = await apiJson<any[]>('/api/internships');
-        const candidates = await apiJson<any[]>('/api/candidates');
+  const internships = await apiJson<InternshipLite[]>('/api/internships');
+  const candidates = await apiJson<CandidateLite[]>('/api/candidates');
         if (!mounted) return;
         setTotalInternships(Array.isArray(internships) ? internships.length : 0);
         setTotalCandidates(Array.isArray(candidates) ? candidates.length : 0);
       } catch (err) {
-        // keep simple: log and leave counts as null
-        // In production you might surface this to the UI
-        // eslint-disable-next-line no-console
         console.error('Failed to fetch counts', err);
         if (mounted) {
           setTotalInternships(0);

@@ -1,10 +1,25 @@
 # --- Stage 1: Frontend Build ---
-FROM node:20-alpine AS frontend
+# Using bookworm-slim instead of alpine to avoid potential musl-related build issues with some tooling
+FROM node:20-bookworm-slim AS frontend
 WORKDIR /app
+
+# Install minimal OS deps (git sometimes needed for certain packages pulling optional deps)
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && rm -rf /var/lib/apt/lists/*
+
+# Leverage caching by copying only lock files first
 COPY package.json package-lock.json* bun.lockb* ./
-RUN npm install --legacy-peer-deps
+
+# Ensure npm install includes dev dependencies regardless of environment flags that Railway might set
+RUN npm set fund false \
+    && npm set audit false \
+    && echo "Node version:" $(node -v) " | npm version:" $(npm -v) \
+    && npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+
+# Copy the rest of the source
 COPY . .
-RUN npm run build
+
+# Build the frontend (add explicit log for clarity)
+RUN echo "Starting Vite production build..." && npm run build
 
 # --- Stage 2: Python Backend ---
 FROM python:3.12-slim AS backend
@@ -27,6 +42,9 @@ COPY .env.example ./
 
 # Copy built frontend from previous stage
 COPY --from=frontend /app/dist ./dist
+
+# (Optional) Copy package.json for static serving references if ever needed
+COPY --from=frontend /app/package.json ./dist/package.json
 
 # Expose port
 EXPOSE 8000
